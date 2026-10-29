@@ -1,67 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Download, Smartphone } from "lucide-react";
-
+import { ArrowRight, BookOpen, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHero, SiteLayout } from "@/components/hey/SiteLayout";
-import { HudChip, HudLabel, Panel, SectionHeading } from "@/components/hey/primitives";
-
-export const Route = createFileRoute("/e-book")({
-  head: () => ({
-    meta: [
-      { title: "E-book — Griya Pustaka Mandiri" },
-      { name: "description", content: "Jelajahi koleksi e-book Griya Pustaka Mandiri dalam format digital." },
-      { property: "og:title", content: "E-book — Griya Pustaka Mandiri" },
-      { property: "og:description", content: "Koleksi buku digital dari Griya Pustaka Mandiri." },
-    ],
-  }),
-  component: Ebook,
-});
-
-function Ebook() {
-  return (
-    <SiteLayout>
-      <PageHero
-        eyebrow="Perpustakaan Digital"
-        title="Bacaan berkualitas, dalam genggaman"
-        description="Halaman e-book Griya Pustaka Mandiri akan menjadi ruang untuk menemukan dan membaca karya dalam format digital. Informasi judul dan akses akan ditampilkan setelah koleksi siap dipublikasikan."
-      />
-      <section className="section">
-        <div className="shell">
-          <SectionHeading
-            eyebrow="Koleksi Digital"
-            title="Temukan bacaan untuk dibawa ke mana saja"
-            description="E-book dapat membantu pembaca mengakses pengetahuan dengan praktis melalui ponsel, tablet, atau komputer."
-          />
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            <Panel className="flex flex-col gap-3 p-6">
-              <span className="grid size-11 place-items-center rounded-xl border border-border bg-surface/70 text-primary"><BookOpen className="size-5" /></span>
-              <h3 className="font-semibold">Koleksi terkurasi</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">Informasi buku digital akan disertai judul, penulis, deskripsi, dan format yang tersedia.</p>
-            </Panel>
-            <Panel className="flex flex-col gap-3 p-6">
-              <span className="grid size-11 place-items-center rounded-xl border border-border bg-surface/70 text-primary"><Smartphone className="size-5" /></span>
-              <h3 className="font-semibold">Mudah diakses</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">Rancangannya responsif agar nyaman dibuka melalui ponsel maupun layar komputer.</p>
-            </Panel>
-            <Panel className="flex flex-col gap-3 p-6">
-              <span className="grid size-11 place-items-center rounded-xl border border-border bg-surface/70 text-primary"><Download className="size-5" /></span>
-              <h3 className="font-semibold">Informasi akses jelas</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">Tautan baca atau unduh hanya akan tersedia untuk judul yang telah siap dan memiliki izin distribusi.</p>
-            </Panel>
-          </div>
-          <Panel className="relative mt-8 overflow-hidden p-8 text-center md:p-12">
-            <div aria-hidden className="absolute inset-0 atmosphere opacity-40" />
-            <div className="relative mx-auto flex max-w-xl flex-col items-center">
-              <HudChip tone="active">Segera Hadir</HudChip>
-              <span className="mt-5 grid size-16 place-items-center rounded-2xl border border-border bg-background/70 text-primary"><BookOpen className="size-7" /></span>
-              <HudLabel className="mt-5">Koleksi E-book</HudLabel>
-              <h2 className="mt-2 text-2xl font-semibold">Koleksi digital sedang disiapkan</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Saat ini belum ada judul e-book yang dipublikasikan pada halaman ini. Kami akan menambahkan sampul, penulis, deskripsi, format, dan informasi akses setelah data buku terverifikasi.</p>
-              <Button asChild variant="hero" size="lg" className="mt-6"><Link to="/contact">Tanyakan E-book <ArrowRight /></Link></Button>
-            </div>
-          </Panel>
-        </div>
-      </section>
-    </SiteLayout>
-  );
-}
+import { Panel } from "@/components/hey/primitives";
+import { getCatalogBooks } from "@/lib/catalog-books";
+export const Route=createFileRoute("/e-book")({loader:()=>getCatalogBooks(),head:()=>({meta:[{title:"E-book — Griya Pustaka Mandiri"},{name:"description",content:"Beli dan akses buku digital terbitan Griya Pustaka Mandiri."}]}),component:Ebook});
+function Ebook(){const result=Route.useLoaderData();const books=result.success?result.books.filter(b=>b.status==="published"&&(/e-?book|digital/i.test(b.format))):[];return <SiteLayout><PageHero eyebrow="Koleksi Digital" title="E-book Griya Pustaka Mandiri" description="Temukan buku digital yang tersedia. Informasi harga dan akses mengikuti format serta lisensi setiap judul."/><section className="section"><div className="shell">{books.length?<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">{books.map(book=><Panel key={book.id} className="overflow-hidden p-0"><img src={book.coverUrl||undefined} alt={"Sampul "+book.title} className="aspect-[3/4] w-full bg-white object-cover"/><div className="p-4"><p className="text-xs text-primary">{book.category}</p><h2 className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold">{book.title}</h2><p className="mt-1 text-xs text-muted-foreground">{book.authors?.length?book.authors.map(a=>a.name).join(", "):book.author}</p><p className="mt-3 font-semibold">{book.price||"Harga belum tersedia"}</p>{book.stockQuantity>0&&book.price&&/[0-9]/.test(book.price)?<Button className="mt-3 w-full" size="sm" variant="hero" onClick={()=>{let cart:{bookId:number;quantity:number}[]=[];try{const parsed=JSON.parse(localStorage.getItem("gpm_cart")??"[]");if(Array.isArray(parsed))cart=parsed;}catch{cart=[];}const found=cart.find(x=>x.bookId===book.id);if(found)found.quantity=Math.min(book.stockQuantity,20,found.quantity+1);else cart.push({bookId:book.id,quantity:1});localStorage.setItem("gpm_cart",JSON.stringify(cart));window.location.href="/keranjang";}}><ShoppingCart className="size-4"/>Tambah ke Keranjang</Button>:<p className="mt-3 text-xs text-muted-foreground">Belum tersedia untuk dibeli.</p>}</div></Panel>)}</div>:<Panel className="p-10 text-center"><BookOpen className="mx-auto size-9 text-muted-foreground"/><h2 className="mt-4 text-xl font-semibold">Koleksi e-book sedang disiapkan</h2><p className="mt-2 text-sm text-muted-foreground">Judul digital akan muncul di sini setelah format, harga, stok lisensi, dan aksesnya disiapkan pada katalog.</p><Button asChild variant="hero" className="mt-5"><Link to="/katalog">Jelajahi Katalog Buku <ArrowRight/></Link></Button></Panel>}</div></section></SiteLayout>;}
