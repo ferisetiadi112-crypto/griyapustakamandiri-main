@@ -185,8 +185,12 @@ function CatalogAdmin() {
             {coverNotice && <p role="status" className="mt-2 text-sm text-muted-foreground">{coverNotice}</p>}
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-medium">Sinopsis / deskripsi buku</label>
-            <textarea rows={5} value={form.synopsis} onChange={(e) => change("synopsis", e.target.value)} placeholder="Tuliskan ringkasan buku untuk calon pembaca..." className="w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm outline-none focus:border-primary/60" />
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <label htmlFor="book-synopsis" className="block text-sm font-medium">Sinopsis / deskripsi buku</label>
+              <span className={`text-xs ${form.synopsis.length >= 350 ? "font-semibold text-amber-600" : "text-muted-foreground"}`}>{form.synopsis.length}/350 karakter</span>
+            </div>
+            <textarea id="book-synopsis" rows={4} maxLength={350} value={form.synopsis} onChange={(e) => change("synopsis", e.target.value)} placeholder="Tuliskan sinopsis singkat, maksimal 350 karakter..." aria-describedby="synopsis-help" className="w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm outline-none focus:border-primary/60" />
+            <p id="synopsis-help" className="mt-2 text-xs leading-relaxed text-muted-foreground">Maksimal 350 karakter (sekitar 50–60 kata) agar jendela detail buku tetap ringkas dan proporsional.</p>
           </div>
           <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium">Informasi pemesanan (opsional)</label>
