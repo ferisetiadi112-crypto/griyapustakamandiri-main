@@ -804,3 +804,49 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+
+## Platform Penerbitan Buku (Tahap Implementasi)
+
+### Modul yang tersedia pada branch `feature/publishing-platform-v2`
+
+- Katalog buku, stok, keranjang, checkout, dan pencatatan pesanan.
+- Akun pembeli/penulis dengan sesi aman dan verifikasi email.
+- Pengajuan naskah lengkap privat, riwayat status editorial, dan unduhan khusus petugas berwenang.
+- Pengelolaan kontrak, pengiriman salinan bertanda tangan, dan laporan royalti yang mengambil persentase dari kontrak yang sudah ditandatangani.
+- Dashboard pengguna, pengajuan, pesanan, kontrak, dan royalti.
+- Halaman kebijakan privasi, syarat pembelian, dan kebijakan pengajuan naskah.
+
+### Environment variables
+
+Wajib tersedia pada runtime server:
+- `DATABASE_URL`
+- `SESSION_SECRET`
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD`
+
+Untuk pengiriman email verifikasi otomatis, konfigurasi:
+- `PUBLIC_SITE_URL` — URL publik website.
+- `RESEND_API_KEY` — API key layanan email Resend.
+- `RESEND_FROM_EMAIL` — alamat pengirim yang sudah diverifikasi di Resend.
+
+Jika layanan email belum dikonfigurasi, akun baru tetap berstatus belum terverifikasi dan belum dapat mengajukan naskah. Admin dapat memeriksa email secara manual lalu memperbarui status verifikasi melalui dashboard pengguna. Jangan menandai email terverifikasi tanpa pemeriksaan yang memadai.
+
+### Batasan sebelum penggunaan produksi
+
+- **Payment gateway belum terintegrasi.** Checkout hanya mencatat pesanan dengan status pembayaran belum aktif. Sistem sengaja menolak penetapan status lunas manual; status lunas harus berasal dari callback gateway yang tervalidasi. Pilih penyedia, siapkan akun merchant, lalu implementasikan dan uji adapter serta webhook sebelum mengaktifkan pembayaran.
+- **Kurir belum terintegrasi otomatis.** Admin dapat mencatat metode pengiriman, biaya, dan resi. Biaya pengiriman harus dikonfirmasi sebelum pembayaran.
+- **Berkas naskah** disimpan privat di PostgreSQL dengan batas 2,5 MB untuk tahap awal. Untuk naskah besar atau volume tinggi, pindahkan berkas ke object storage privat dengan URL bertanda tangan dan kebijakan retensi.
+- **Kontrak bertanda tangan** disimpan privat di database dan dibatasi aksesnya. Pastikan proses penandatanganan dan penyimpanan sesuai kebijakan hukum perusahaan.
+- **Royalti** dicatat dari pendapatan bersih yang telah diverifikasi. Definisi pendapatan bersih, retur, diskon, pajak, dan biaya transaksi harus sesuai kontrak masing-masing.
+- Skema tabel penerbitan dibuat dengan `CREATE TABLE IF NOT EXISTS` dan penambahan kolom kompatibel saat fungsi server dipanggil. Lakukan backup dan uji migrasi pada database nonproduksi sebelum deployment produksi.
+
+### Route utama
+
+- `/katalog`, `/e-book`, `/penulis`
+- `/daftar`, `/masuk`, `/akun`
+- `/menjadi-penulis`, `/ajukan-naskah`, `/kontrak-saya`, `/royalti-saya`
+- `/keranjang`, `/checkout`
+- `/dashboard`, `/dashboard/katalog`, `/dashboard/pengajuan`, `/dashboard/kontrak`, `/dashboard/pesanan`, `/dashboard/pengguna`, `/dashboard/royalti`
+
+Catatan: branch ini adalah implementasi kerja dan perlu lulus build, pemeriksaan keamanan, serta uji alur sebelum digabung ke `main`.
