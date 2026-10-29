@@ -342,9 +342,6 @@ export const reviewSubmission = createServerFn({ method: "POST" as const })
     if (!allowed.includes(data.status)) return { success: false as const, error: "Status pengajuan tidak valid." };
     const canMakeFinalDecision = adminSession.authenticated || Boolean(user?.roles.some((role) => role === "admin" || role === "leadership"));
     if ((data.status === "rejected" || data.status === "contracted") && !canMakeFinalDecision) return { success: false as const, error: "Keputusan akhir hanya dapat dilakukan admin atau pimpinan." };
-    if (false) {
-      if (data.status === "rejected" || data.status === "contracted") return { success: false as const, error: "Keputusan akhir hanya dapat dilakukan admin atau pimpinan." };
-    }
     const sql = await ensurePlatformTables();
     const existing = await sql`SELECT status,reference_code FROM gpm_author_submissions WHERE id=${data.submissionId} LIMIT 1`;
     if (!existing.length) return { success: false as const, error: "Pengajuan tidak ditemukan." };
