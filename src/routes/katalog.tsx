@@ -217,11 +217,9 @@ function Katalog() {
             <div className="grid gap-5 sm:grid-cols-[minmax(150px,220px)_1fr]">
               <div className="space-y-4">
                 <div className="rounded-md bg-white p-3">
-                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Sampul Depan</p>
                   {selectedBook.coverUrl ? <img src={selectedBook.coverUrl} alt={`Sampul depan buku ${selectedBook.title}`} className="mx-auto max-h-[280px] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center text-muted-foreground"><BookOpen className="size-12" /></div>}
                 </div>
                 {selectedBook.backCoverUrl && <div className="rounded-md bg-white p-3">
-                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Sampul Belakang</p>
                   <img src={selectedBook.backCoverUrl} alt={`Sampul belakang buku ${selectedBook.title}`} className="mx-auto max-h-[280px] w-full object-contain" />
                 </div>}
               </div>
