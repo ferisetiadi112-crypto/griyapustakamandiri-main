@@ -8,16 +8,16 @@ import { HudLabel, Panel, SectionHeading } from "@/components/hey/primitives";
 export const Route = createFileRoute("/technology")({
   head: () => ({
     meta: [
-      { title: "Technology — The Hey5050 Architecture" },
+      { title: "Technology — The Griya Pustaka Mandiri Architecture" },
       {
         name: "description",
         content:
-          "The Hey5050 architecture: an intelligence layer, an automation core, a creation surface and a connection fabric, assembled into one command environment.",
+          "The Griya Pustaka Mandiri architecture: an intelligence layer, an automation core, a creation surface and a connection fabric, assembled into one command environment.",
       },
-      { property: "og:title", content: "Technology — Hey5050" },
+      { property: "og:title", content: "Technology — Griya Pustaka Mandiri" },
       {
         property: "og:description",
-        content: "How the Hey5050 platform is layered, from connection fabric to command surface.",
+        content: "How the Griya Pustaka Mandiri platform is layered, from connection fabric to command surface.",
       },
     ],
   }),
@@ -77,7 +77,7 @@ function Technology() {
       <PageHero
         eyebrow="Architecture"
         title="A layered system, engineered to stay understandable"
-        description="Hey5050 is assembled from independent layers. Each one can evolve without destabilising the others — which is what makes long-horizon technology practical."
+        description="Griya Pustaka Mandiri is assembled from independent layers. Each one can evolve without destabilising the others — which is what makes long-horizon technology practical."
       />
 
       <section className="section">

@@ -10,14 +10,14 @@ import planet from "@/assets/planet-portal.jpg";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Login — Enter the Hey5050 Console" },
+      { title: "Login — Enter the Griya Pustaka Mandiri Console" },
       {
         name: "description",
         content:
-          "Sign in to the Hey5050 command console to connect your TikTok account.",
+          "Sign in to the Griya Pustaka Mandiri command console to connect your TikTok account.",
       },
-      { property: "og:title", content: "Login — Hey5050" },
-      { property: "og:description", content: "Enter the next generation. Hey5050 console access." },
+      { property: "og:title", content: "Login — Griya Pustaka Mandiri" },
+      { property: "og:description", content: "Enter the next generation. Griya Pustaka Mandiri console access." },
     ],
   }),
   component: Login,
@@ -45,7 +45,7 @@ function Login() {
           <div className="max-w-sm">
             <HudChip tone="active">Secure Docking</HudChip>
             <h2 className="mt-5 text-3xl font-semibold leading-tight">
-              Entering the Hey5050 orbital console
+              Entering the Griya Pustaka Mandiri orbital console
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Connect your TikTok account for AI-powered growth management
@@ -72,7 +72,7 @@ function Login() {
           </Link>
 
           <HudLabel>Access Terminal</HudLabel>
-          <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Welcome to Hey5050</h1>
+          <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Welcome to Griya Pustaka Mandiri</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Connect your TikTok account through a secure browser session.
             You log in directly — your credentials never leave TikTok.
@@ -88,7 +88,7 @@ function Login() {
           </div>
 
           <p className="mt-8 text-center text-xs text-muted-foreground">
-            Your TikTok credentials are never stored by Hey5050.
+            Your TikTok credentials are never stored by Griya Pustaka Mandiri.
             A persistent browser profile maintains your session for AI-powered observation.
           </p>
         </div>

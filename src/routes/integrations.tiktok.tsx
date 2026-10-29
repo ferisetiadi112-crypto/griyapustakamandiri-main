@@ -9,16 +9,16 @@ import { HudChip, Panel, SectionHeading } from "@/components/hey/primitives";
 export const Route = createFileRoute("/integrations/tiktok")({
   head: () => ({
     meta: [
-      { title: "TikTok Integration — One Connection Inside Hey5050" },
+      { title: "TikTok Integration — One Connection Inside Griya Pustaka Mandiri" },
       {
         name: "description",
         content:
-          "How the TikTok integration fits inside Hey5050: one optional connection within a broader platform for creation, automation and connected systems.",
+          "How the TikTok integration fits inside Griya Pustaka Mandiri: one optional connection within a broader platform for creation, automation and connected systems.",
       },
-      { property: "og:title", content: "TikTok Integration — Hey5050" },
+      { property: "og:title", content: "TikTok Integration — Griya Pustaka Mandiri" },
       {
         property: "og:description",
-        content: "TikTok is one integration capability inside the Hey5050 platform, not its identity.",
+        content: "TikTok is one integration capability inside the Griya Pustaka Mandiri platform, not its identity.",
       },
     ],
   }),
@@ -58,7 +58,7 @@ function TikTokIntegration() {
       <PageHero
         eyebrow="Integration · Optional Module"
         title="TikTok is one connection, not the platform"
-        description="Hey5050 is a technology platform first. The TikTok integration is an optional module that lives inside the authenticated console for accounts that want it."
+        description="Griya Pustaka Mandiri is a technology platform first. The TikTok integration is an optional module that lives inside the authenticated console for accounts that want it."
       />
 
       <section className="section">

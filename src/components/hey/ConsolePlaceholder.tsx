@@ -9,7 +9,7 @@ export function ConsolePlaceholder({ module }: { module: string }) {
         <div>
           <h2 className="text-xl font-semibold">Interface reserved</h2>
           <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            The {module.toLowerCase()} module is part of the Hey5050 console architecture. Its
+            The {module.toLowerCase()} module is part of the Griya Pustaka Mandiri console architecture. Its
             layout is in place; the underlying system comes online in a later phase.
           </p>
         </div>
