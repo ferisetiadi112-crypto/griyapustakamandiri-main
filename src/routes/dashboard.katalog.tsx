@@ -64,7 +64,7 @@ function CatalogAdmin() {
       if (image.height <= image.width || Math.abs(ratio - a4Ratio) / a4Ratio > 0.06) {
         throw new Error("Gunakan sampul portrait dengan proporsi A4 (210 × 297 mm), bukan landscape atau persegi.");
       }
-      const maxHeight = 1754;
+      const maxHeight = 1200;
       const scale = Math.min(1, maxHeight / image.height);
       const canvas = document.createElement("canvas");
       canvas.width = Math.round(image.width * scale);
@@ -74,13 +74,13 @@ function CatalogAdmin() {
       context.fillStyle = "#ffffff";
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      let quality = 0.86;
+      let quality = 0.78;
       let optimized = canvas.toDataURL("image/jpeg", quality);
-      while (optimized.length > 2_400_000 && quality > 0.5) {
+      while (optimized.length > 220_000 && quality > 0.38) {
         quality -= 0.08;
         optimized = canvas.toDataURL("image/jpeg", quality);
       }
-      if (optimized.length > 2_900_000) throw new Error("Gambar masih terlalu besar setelah dioptimalkan. Pilih gambar yang lebih sederhana atau lebih kecil.");
+      if (optimized.length > 260_000) throw new Error("Sampul masih terlalu besar setelah dioptimalkan. Pilih gambar yang lebih sederhana atau kompres gambar terlebih dahulu.");
       change("coverUrl", optimized);
       setCoverNotice("Sampul siap digunakan. Gambar telah dioptimalkan otomatis.");
     } catch (uploadError) {
@@ -171,7 +171,7 @@ function CatalogAdmin() {
               onChange={(event) => void handleCoverUpload(event)}
               className="block w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium"
             />
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Format JPG, PNG, atau WebP. Maksimal 3 MB sebelum diproses. Sampul harus tegak (portrait) dengan rasio A4 210 × 297 mm; ukuran desain yang disarankan 1240 × 1754 px. Gambar akan dioptimalkan otomatis agar lebih ringan.</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Format JPG, PNG, atau WebP. Maksimal 3 MB sebelum diproses. Sampul harus tegak (portrait) dengan rasio A4 210 × 297 mm; ukuran desain yang disarankan 1240 × 1754 px. Gambar akan dioptimalkan otomatis agar katalog tetap cepat dibuka.</p>
             {form.coverUrl && <div className="mt-3 flex items-start gap-4 rounded-xl border border-border p-3">
               <img src={form.coverUrl} alt="Pratinjau sampul buku" className="h-40 w-auto max-w-28 rounded-md border border-border object-contain" />
               <div className="min-w-0 flex-1">
