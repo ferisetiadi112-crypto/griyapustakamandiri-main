@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { getCatalogBooks } from "@/lib/catalog-books";
-import { PageHero, SiteLayout } from "@/components/hey/SiteLayout";
-import { HudChip, HudLabel, Panel } from "@/components/hey/primitives";
+import { SiteLayout } from "@/components/hey/SiteLayout";
+import { HudLabel, Panel } from "@/components/hey/primitives";
 
 export const Route = createFileRoute("/katalog")({
   head: () => ({
