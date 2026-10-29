@@ -215,8 +215,15 @@ function Katalog() {
           <section role="dialog" aria-modal="true" aria-labelledby="book-detail-title" className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-border bg-background p-5 shadow-2xl sm:p-7" onClick={(event) => event.stopPropagation()}>
             <button type="button" onClick={() => setSelectedBook(null)} aria-label="Tutup detail buku" className="absolute right-3 top-3 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><X className="size-5" /></button>
             <div className="grid gap-5 sm:grid-cols-[minmax(150px,220px)_1fr]">
-              <div className="rounded-md bg-white p-3">
-                {selectedBook.coverUrl ? <img src={selectedBook.coverUrl} alt={`Sampul buku ${selectedBook.title}`} className="mx-auto max-h-[320px] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center text-muted-foreground"><BookOpen className="size-12" /></div>}
+              <div className="space-y-4">
+                <div className="rounded-md bg-white p-3">
+                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Sampul Depan</p>
+                  {selectedBook.coverUrl ? <img src={selectedBook.coverUrl} alt={`Sampul depan buku ${selectedBook.title}`} className="mx-auto max-h-[280px] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center text-muted-foreground"><BookOpen className="size-12" /></div>}
+                </div>
+                {selectedBook.backCoverUrl && <div className="rounded-md bg-white p-3">
+                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Sampul Belakang</p>
+                  <img src={selectedBook.backCoverUrl} alt={`Sampul belakang buku ${selectedBook.title}`} className="mx-auto max-h-[280px] w-full object-contain" />
+                </div>}
               </div>
               <div className="pt-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selectedBook.category}</p>
