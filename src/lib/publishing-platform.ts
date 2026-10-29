@@ -427,7 +427,8 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
       for (const item of items as { book_id: number; quantity: number }[]) await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity+${item.quantity} WHERE id=${item.book_id}`;
       await sql`UPDATE gpm_orders SET stock_released=TRUE WHERE id=${data.orderId}`;
     }
-    await sql`UPDATE gpm_orders SET order_status=${data.orderStatus},payment_status=${data.paymentStatus},shipping_method=${data.shippingMethod.trim()},tracking_number=${data.trackingNumber.trim()},admin_note=${data.adminNote.trim()},updated_at=NOW() WHERE id=${data.orderId}`;
+    if (previous.stock_released && !["cancelled","refunded"].includes(data.orderStatus)) return { success: false as const, error: "Pesanan yang dibatalkan/diretur tidak dapat diaktifkan kembali. Buat pesanan baru." };
+    await sql`UPDATE gpm_orders SET order_status=${data.orderStatus},payment_status=${data.paymentStatus},shipping_method=${data.shippingMethod.trim()},shipping_cost=${Math.round(data.shippingCost)},total=subtotal+${Math.round(data.shippingCost)},tracking_number=${data.trackingNumber.trim()},admin_note=${data.adminNote.trim()},updated_at=NOW() WHERE id=${data.orderId}`;
     await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user?.id ?? null},${user?.email ?? adminSession.username ?? "admin"},'order.updated','order',${String(data.orderId)},${data.orderStatus + '/' + data.paymentStatus})`;
     return { success: true as const };
   });
