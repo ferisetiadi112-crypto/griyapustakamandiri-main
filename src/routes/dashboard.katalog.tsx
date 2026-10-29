@@ -5,11 +5,11 @@ import { ArrowLeft, BookOpen, ExternalLink, Pencil, Plus, Save, Trash2 } from "l
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/hey/DashboardLayout";
 import { HudChip, HudLabel, Panel } from "@/components/hey/primitives";
-import { deleteCatalogBook, getCatalogBooks, saveCatalogBook, type CatalogBook } from "@/lib/catalog-books";
+import { deleteCatalogBook, getAdminCatalogBooks, saveCatalogBook, type CatalogBook } from "@/lib/catalog-books";
 
 export const Route = createFileRoute("/dashboard/katalog")({
   head: () => ({ meta: [{ title: "Kelola Katalog Buku — Griya Pustaka Mandiri" }] }),
-  loader: async () => getCatalogBooks(),
+  loader: async () => getAdminCatalogBooks(),
   component: CatalogAdmin,
 });
 
