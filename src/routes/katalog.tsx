@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, BookOpen, Search, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { getCatalogBooks } from "@/lib/catalog-books";
 import { PageHero, SiteLayout } from "@/components/hey/SiteLayout";
-import { HudChip, HudLabel, Panel, SectionHeading } from "@/components/hey/primitives";
+import { HudChip, HudLabel, Panel } from "@/components/hey/primitives";
 
 export const Route = createFileRoute("/katalog")({
   head: () => ({
@@ -113,17 +113,20 @@ function Katalog() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua Kategori");
   const [status, setStatus] = useState<(typeof STATUS_FILTERS)[number]>("Semua");
+  const [selectedBook, setSelectedBook] = useState<(typeof books)[number] | null>(null);
 
   return (
     <SiteLayout>
-      <PageHero
-        eyebrow="Katalog Buku"
-        title="Jelajahi gagasan, temukan bacaan"
-        description="Katalog Griya Pustaka Mandiri dirancang untuk membantu pembaca menjelajahi buku berdasarkan bidang, tema, dan status penerbitannya. Daftar judul akan ditambahkan setelah informasi buku resmi tersedia."
-      />
+      <section className="border-b border-border bg-background/80 py-8 sm:py-10">
+        <div className="shell">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Griya Pustaka Mandiri</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Katalog Buku</h1>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Temukan buku berdasarkan kategori, penulis, dan status penerbitan.</p>
+        </div>
+      </section>
       <section className="section">
         <div className="shell">
-          <div className="mt-12 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <div className="mt-6 grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
             <aside className="self-start lg:sticky lg:top-28" aria-label="Navigasi kategori buku">
               <Panel className="overflow-hidden p-0">
                 <div className="border-b border-border px-5 py-4">
@@ -147,10 +150,9 @@ function Katalog() {
             </aside>
 
             <div className="min-w-0">
-              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <HudChip tone="active">Katalog Buku</HudChip>
-                  <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">{selectedCategory === "Semua Kategori" ? "Koleksi buku" : selectedCategory}</h2>
+                  <h2 className="text-xl font-semibold sm:text-2xl">{selectedCategory === "Semua Kategori" ? "Koleksi buku" : selectedCategory}</h2>
                 </div>
                 <div className="flex flex-wrap items-center gap-2" aria-label="Filter status buku">
                   <span className="mr-1 inline-flex items-center gap-2 text-xs text-muted-foreground"><SlidersHorizontal className="size-3.5" /> Status:</span>
@@ -159,9 +161,9 @@ function Katalog() {
                   ))}
                 </div>
               </div>
-              <div className="relative w-full mb-6">
+              <div className="relative mb-4 w-full">
                 <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari judul, penulis, atau topik buku..." aria-label="Cari judul, penulis, atau topik buku" className="h-11 w-full rounded-xl border border-border bg-background/70 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/60" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari judul, penulis, atau topik buku..." aria-label="Cari judul, penulis, atau topik buku" className="h-10 w-full rounded-md border border-border bg-background/70 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/60" />
               </div>
               {(() => {
                 const normalized = query.trim().toLocaleLowerCase("id");
@@ -174,20 +176,21 @@ function Katalog() {
                 return visibleBooks.length ? (
                   <>
                     <p className="mb-4 text-sm text-muted-foreground">{visibleBooks.length} buku ditemukan</p>
-                    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
                       {visibleBooks.map((book) => (
-                        <Panel key={book.id} className="overflow-hidden p-0">
-                          {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="h-64 w-full border-b border-border object-contain bg-secondary/30 p-3" /> : <div className="grid h-64 place-items-center border-b border-border bg-secondary/30"><BookOpen className="size-12 text-muted-foreground/50" /></div>}
-                          <div className="p-5">
-                            <div className="flex flex-wrap items-center gap-2"><HudChip tone={book.status === "published" ? "active" : undefined}>{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</HudChip><span className="text-xs text-muted-foreground">{book.category}</span></div>
-                            <h3 className="mt-3 text-lg font-semibold">{book.title}</h3>
-                            <p className="mt-1 text-sm text-muted-foreground">Oleh {book.author}</p>
-                            {book.synopsis && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{book.synopsis}</p>}
-                            <div className="mt-4 space-y-1 text-xs text-muted-foreground"><p>ISBN: {book.isbn || "Dalam proses / belum tersedia"}</p><p>Format: {book.format}{book.price ? ` · ${book.price}` : ""}</p></div>
-                            {book.orderInfo && <p className="mt-3 text-sm font-medium text-primary">{book.orderInfo}</p>}
-                            <Button asChild variant="glass" className="mt-4 w-full"><Link to="/contact">Tanyakan Buku <ArrowRight /></Link></Button>
+                        <article key={book.id} className="overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-lg">
+                          <button type="button" onClick={() => setSelectedBook(book)} className="block w-full bg-white p-2" aria-label={`Lihat detail ${book.title}`}>
+                            {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="aspect-[3/4] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center bg-secondary/30"><BookOpen className="size-10 text-muted-foreground/50" /></div>}
+                          </button>
+                          <div className="p-3">
+                            <p className="text-[10px] font-medium uppercase tracking-wide text-primary">{book.category}</p>
+                            <h3 className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-snug">{book.title}</h3>
+                            <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{book.author}</p>
+                            <p className="mt-2 text-xs text-muted-foreground">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
+                            {book.price && <p className="mt-1 text-sm font-semibold">{book.price.toLowerCase().includes("rp") ? book.price : `Rp${book.price}`}</p>}
+                            <button type="button" onClick={() => setSelectedBook(book)} className="mt-3 flex min-h-9 w-full items-center justify-center gap-1 rounded border border-border px-2 py-2 text-xs font-semibold transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary">Lihat Lebih Detail <ArrowRight className="size-3.5" /></button>
                           </div>
-                        </Panel>
+                        </article>
                       ))}
                     </div>
                   </>
@@ -207,6 +210,32 @@ function Katalog() {
           </div>
         </div>
       </section>
+      {selectedBook && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4" role="presentation" onClick={() => setSelectedBook(null)}>
+          <section role="dialog" aria-modal="true" aria-labelledby="book-detail-title" className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-border bg-background p-5 shadow-2xl sm:p-7" onClick={(event) => event.stopPropagation()}>
+            <button type="button" onClick={() => setSelectedBook(null)} aria-label="Tutup detail buku" className="absolute right-3 top-3 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><X className="size-5" /></button>
+            <div className="grid gap-5 sm:grid-cols-[minmax(150px,220px)_1fr]">
+              <div className="rounded-md bg-white p-3">
+                {selectedBook.coverUrl ? <img src={selectedBook.coverUrl} alt={`Sampul buku ${selectedBook.title}`} className="mx-auto max-h-[320px] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center text-muted-foreground"><BookOpen className="size-12" /></div>}
+              </div>
+              <div className="pt-1">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selectedBook.category}</p>
+                <h2 id="book-detail-title" className="mt-2 pr-7 text-2xl font-bold">{selectedBook.title}</h2>
+                <p className="mt-2 text-sm text-muted-foreground">Oleh {selectedBook.author}</p>
+                <p className="mt-3 text-sm">{selectedBook.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
+                {selectedBook.synopsis && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{selectedBook.synopsis}</p>}
+                <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
+                  <p><span className="text-muted-foreground">ISBN:</span> {selectedBook.isbn || "Dalam proses / belum tersedia"}</p>
+                  <p><span className="text-muted-foreground">Format:</span> {selectedBook.format}</p>
+                  {selectedBook.price && <p><span className="text-muted-foreground">Harga:</span> {selectedBook.price}</p>}
+                </div>
+                {selectedBook.orderInfo && <p className="mt-3 text-sm font-semibold text-primary">Info pemesanan: {selectedBook.orderInfo}</p>}
+                <Button asChild variant="glass" className="mt-5 w-full"><Link to="/contact">Hubungi Penerbit <ArrowRight /></Link></Button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
     </SiteLayout>
   );
 }
