@@ -201,6 +201,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/katalog': typeof KatalogRoute
+  '/e-book': typeof EbookRoute
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -228,6 +229,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/katalog': typeof KatalogRoute
+  '/e-book': typeof EbookRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
