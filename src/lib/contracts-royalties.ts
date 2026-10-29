@@ -65,7 +65,7 @@ export const listRoyaltyForStaff = createServerFn({ method: "GET" as const }).ha
   const royalties = await sql`SELECT r.id,r.user_id,r.book_id,r.period_start,r.period_end,r.units_sold,r.gross_revenue,r.net_revenue,r.royalty_percent,r.royalty_amount,r.status,r.paid_at,r.payment_reference,u.name AS author_name,b.title AS book_title FROM gpm_royalty_periods r JOIN gpm_users u ON u.id=r.user_id LEFT JOIN gpm_catalog_books b ON b.id=r.book_id ORDER BY r.period_start DESC LIMIT 500`;
   const authors = await sql`SELECT id,name,email FROM gpm_users WHERE active=TRUE AND roles LIKE '%author%' ORDER BY name`;
   const books = await sql`SELECT id,title,author FROM gpm_catalog_books ORDER BY title`;
-  const contracts = await sql`SELECT id,contract_reference,user_id,book_id,royalty_percent,net_revenue_definition FROM gpm_publishing_contracts WHERE status=${"signed"} AND book_id IS NOT NULL ORDER BY contract_reference`;
+  const contracts = await sql`SELECT c.id,c.contract_reference,c.user_id,c.book_id,c.royalty_percent,c.net_revenue_definition,b.title AS book_title,u.name AS author_name FROM gpm_publishing_contracts c JOIN gpm_users u ON u.id=c.user_id JOIN gpm_catalog_books b ON b.id=c.book_id WHERE c.status=${"signed"} AND c.book_id IS NOT NULL ORDER BY c.contract_reference`;
   return { success: true as const, royalties, authors, books, contracts };
 });
 
