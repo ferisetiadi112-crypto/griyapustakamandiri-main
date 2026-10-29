@@ -35,6 +35,7 @@ import { Route as ApiAuthYoutubeCallbackRouteImport } from './routes/api.auth.yo
 import { Route as PaketPenerbitanRouteImport } from './routes/paket-penerbitan'
 import { Route as KatalogRouteImport } from './routes/katalog'
 import { Route as EbookRouteImport } from './routes/e-book'
+import { Route as EbookRouteImport } from './routes/e-book'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,6 +60,11 @@ const PaketPenerbitanRoute = PaketPenerbitanRouteImport.update({
 const KatalogRoute = KatalogRouteImport.update({
   id: '/katalog',
   path: '/katalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EbookRoute = EbookRouteImport.update({
+  id: '/e-book',
+  path: '/e-book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EbookRoute = EbookRouteImport.update({
@@ -174,7 +180,6 @@ export interface FileRoutesByFullPath {
   '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/katalog': typeof KatalogRoute
   '/e-book': typeof EbookRoute
-  '/e-book': typeof EbookRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -286,6 +291,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/paket-penerbitan'
     | '/katalog'
+    | '/e-book'
     | '/future'
     | '/how-it-works'
     | '/login'
