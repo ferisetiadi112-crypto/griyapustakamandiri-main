@@ -3,29 +3,21 @@ import { Logo } from "@/components/hey/Logo";
 import { StatusDot } from "@/components/hey/primitives";
 
 const GROUPS = [
-  {
-    title: "Penerbitan",
-    links: [
-      { to: "/paket-penerbitan", label: "Paket Penerbitan" },
-      { to: "/about", label: "Tentang Kami" },
-      { to: "/contact", label: "Konsultasi Naskah" },
-    ],
-  },
-  {
-    title: "Untuk Penulis",
-    links: [
-      { to: "/paket-penerbitan", label: "Fasilitas Paket" },
-      { to: "/paket-penerbitan", label: "Persyaratan Naskah" },
-      { to: "/paket-penerbitan", label: "Alur Penerbitan" },
-    ],
-  },
-  {
-    title: "Informasi",
-    links: [
-      { to: "/contact", label: "Kontak" },
-      { to: "/login", label: "Akses Pengguna" },
-    ],
-  },
+  { title: "Jelajahi", links: [
+    { to: "/katalog", label: "Katalog Buku" },
+    { to: "/e-book", label: "E-book" },
+    { to: "/penulis", label: "Profil Penulis" },
+  ] },
+  { title: "Untuk Penulis", links: [
+    { to: "/menjadi-penulis", label: "Menjadi Penulis" },
+    { to: "/ajukan-naskah", label: "Ajukan Naskah" },
+    { to: "/masuk", label: "Akun Penulis" },
+  ] },
+  { title: "Informasi", links: [
+    { to: "/about", label: "Tentang Kami" },
+    { to: "/contact", label: "Kontak" },
+    { to: "/keranjang", label: "Keranjang Belanja" },
+  ] },
 ] as const;
 
 export function Footer() {
@@ -34,18 +26,14 @@ export function Footer() {
       <div className="shell grid gap-12 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)] md:py-16">
         <div className="flex flex-col gap-4">
           <Logo />
-          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">Mendampingi penulis menyiapkan gagasan menjadi buku yang tertata, jelas, dan siap dibaca.</p>
-          <StatusDot label="Melayani kebutuhan penerbitan" tone="idle" />
+          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">Menerbitkan gagasan, memperluas pengetahuan. Temukan buku pilihan dan ajukan naskah untuk seleksi editorial.</p>
+          <StatusDot label="Penerbit buku cetak & digital" tone="idle" />
         </div>
         {GROUPS.map((group) => (
           <div key={group.title} className="flex flex-col gap-3">
             <h3 className="hud-label">{group.title}</h3>
-            {group.links.map((link, index) => (
-              link.to === "/paket-penerbitan" ? (
-                <a key={group.title + index} href={link.to} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{link.label}</a>
-              ) : (
-                <Link key={link.to + index} to={link.to} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{link.label}</Link>
-              )
+            {group.links.map((link) => (
+              <Link key={link.to} to={link.to} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{link.label}</Link>
             ))}
           </div>
         ))}
