@@ -163,9 +163,9 @@ function Katalog() {
                 <div className="border-b border-border px-5 py-4">
                   <HudLabel>Kategori Buku</HudLabel>
                   <h2 className="mt-1 text-lg font-semibold">Jelajahi bidang</h2>
-                  <p className="mt-1 text-xs text-muted-foreground">Pilih kategori untuk menyaring katalog.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Pilih kategori untuk menyaring koleksi buku.</p>
                 </div>
-                <div className="max-h-[65vh] overflow-y-auto p-2">
+                <div className="max-h-[70vh] overflow-y-auto p-2">
                   <button type="button" onClick={() => setSelectedCategory("Semua Kategori")} aria-pressed={selectedCategory === "Semua Kategori"} className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${selectedCategory === "Semua Kategori" ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}>
                     <span>Semua Kategori</span>
                     {selectedCategory === "Semua Kategori" && <span aria-hidden="true">✓</span>}
@@ -181,82 +181,64 @@ function Katalog() {
             </aside>
 
             <div className="min-w-0">
-              <SectionHeading eyebrow="Bidang Katalog" title={selectedCategory === "Semua Kategori" ? "Pilih bidang yang ingin Anda jelajahi" : selectedCategory} description="Daftar kategori membantu pembaca menelusuri topik. Kategori yang tampil belum berarti sudah memiliki buku terbit." />
-              <div className="mt-6 flex items-center justify-between gap-3">
-                <p className="text-sm text-muted-foreground">{visibleCategories.length} kategori ditampilkan</p>
-                {selectedCategory !== "Semua Kategori" && <button type="button" onClick={() => setSelectedCategory("Semua Kategori")} className="text-sm text-primary hover:underline">Hapus filter</button>}
-              </div>
-              {visibleCategories.length > 0 ? (
-                <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {visibleCategories.map((category, index) => (
-                    <button key={category.name} type="button" onClick={() => setSelectedCategory(category.name)} className="text-left">
-                      <Panel interactive className={`group flex h-full min-h-36 flex-col gap-4 p-5 transition-colors ${selectedCategory === category.name ? "border-primary/50 bg-primary/5" : ""}`}>
-                        <div className="flex items-start justify-between">
-                          <span className="grid size-10 place-items-center rounded-xl border border-border bg-surface/70 text-primary">{index % 3 === 0 ? <BookOpen className="size-5" /> : index % 3 === 1 ? <BookText className="size-5" /> : <BookMarked className="size-5" />}</span>
-                          <span className="font-mono text-xs text-muted-foreground">{String(CATEGORIES.findIndex((item) => item.name === category.name) + 1).padStart(2, "0")}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{category.name}</h3><ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" /></div>
-                      </Panel>
-                    </button>
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <HudChip tone="active">Katalog Buku</HudChip>
+                  <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">{selectedCategory === "Semua Kategori" ? "Koleksi buku" : selectedCategory}</h2>
+                </div>
+                <div className="flex flex-wrap items-center gap-2" aria-label="Filter status buku">
+                  <span className="mr-1 inline-flex items-center gap-2 text-xs text-muted-foreground"><SlidersHorizontal className="size-3.5" /> Status:</span>
+                  {STATUS_FILTERS.map((item) => (
+                    <button key={item} type="button" onClick={() => setStatus(item)} aria-pressed={status === item} className={`rounded-full border px-3.5 py-2 text-xs transition-colors ${status === item ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>{item}</button>
                   ))}
                 </div>
-              ) : (
-                <Panel className="mt-6 p-8 text-center">
-                  <Search className="mx-auto size-7 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-semibold">Kategori tidak ditemukan</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">Coba kata kunci lain atau tampilkan semua kategori.</p>
-                  <Button variant="glass" className="mt-5" onClick={() => { setQuery(""); setSelectedCategory("Semua Kategori"); }}>Reset pencarian</Button>
-                </Panel>
-              )}
+              </div>
+              <div className="relative w-full mb-6">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari judul, penulis, atau topik buku..." aria-label="Cari judul, penulis, atau topik buku" className="h-11 w-full rounded-xl border border-border bg-background/70 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/60" />
+              </div>
+              {(() => {
+                const normalized = query.trim().toLocaleLowerCase("id");
+                const visibleBooks = books.filter((book) => {
+                  const matchesStatus = status === "Semua" || (status === "Telah Terbit" ? book.status === "published" : book.status === "upcoming");
+                  const matchesCategory = selectedCategory === "Semua Kategori" || book.category.toLocaleLowerCase("id") === selectedCategory.toLocaleLowerCase("id");
+                  const matchesQuery = !normalized || [book.title, book.author, book.category, book.synopsis].some((value) => value.toLocaleLowerCase("id").includes(normalized));
+                  return matchesStatus && matchesCategory && matchesQuery;
+                });
+                return visibleBooks.length ? (
+                  <>
+                    <p className="mb-4 text-sm text-muted-foreground">{visibleBooks.length} buku ditemukan</p>
+                    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                      {visibleBooks.map((book) => (
+                        <Panel key={book.id} className="overflow-hidden p-0">
+                          {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="h-64 w-full border-b border-border object-contain bg-secondary/30 p-3" /> : <div className="grid h-64 place-items-center border-b border-border bg-secondary/30"><BookOpen className="size-12 text-muted-foreground/50" /></div>}
+                          <div className="p-5">
+                            <div className="flex flex-wrap items-center gap-2"><HudChip tone={book.status === "published" ? "active" : undefined}>{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</HudChip><span className="text-xs text-muted-foreground">{book.category}</span></div>
+                            <h3 className="mt-3 text-lg font-semibold">{book.title}</h3>
+                            <p className="mt-1 text-sm text-muted-foreground">Oleh {book.author}</p>
+                            {book.synopsis && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{book.synopsis}</p>}
+                            <div className="mt-4 space-y-1 text-xs text-muted-foreground"><p>ISBN: {book.isbn || "Dalam proses / belum tersedia"}</p><p>Format: {book.format}{book.price ? ` · ${book.price}` : ""}</p></div>
+                            {book.orderInfo && <p className="mt-3 text-sm font-medium text-primary">{book.orderInfo}</p>}
+                            <Button asChild variant="glass" className="mt-4 w-full"><Link to="/contact">Tanyakan Buku <ArrowRight /></Link></Button>
+                          </div>
+                        </Panel>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Panel className="relative overflow-hidden p-8 text-center md:p-12">
+                    <div aria-hidden className="absolute inset-0 atmosphere opacity-50" />
+                    <div className="relative mx-auto flex max-w-xl flex-col items-center">
+                      <span className="grid size-16 place-items-center rounded-2xl border border-border bg-background/70 text-primary"><BookOpen className="size-7" /></span>
+                      <h3 className="mt-5 text-xl font-semibold">{catalogData.success ? "Belum ada buku pada filter ini" : "Katalog belum dapat dimuat"}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{catalogData.success ? "Buku yang ditambahkan melalui panel admin akan tampil di sini setelah disimpan." : "Data katalog sementara tidak dapat diakses. Silakan coba kembali nanti."}</p>
+                      {!catalogData.success && <Button asChild variant="hero" size="lg" className="mt-6"><Link to="/contact">Tanyakan Informasi Buku <ArrowRight /></Link></Button>}
+                    </div>
+                  </Panel>
+                );
+              })()}
             </div>
           </div>
-
-          <section className="mt-16">
-            <div className="mb-7">
-              <HudChip tone="active">Status Katalog</HudChip>
-              <h2 className="mt-4 text-2xl font-semibold sm:text-3xl">{status === "Semua" ? "Koleksi buku" : status}</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                {status === "Telah Terbit" ? "Bagian ini akan menampilkan buku yang sudah terbit dan memiliki informasi publikasi terverifikasi." : status === "Segera Terbit" ? "Bagian ini akan menampilkan buku yang sedang dipersiapkan atau dijadwalkan terbit setelah informasinya dikonfirmasi." : "Katalog judul sedang disiapkan. Hanya buku dengan informasi yang sudah dikonfirmasi yang akan ditampilkan di sini."}
-              </p>
-            </div>
-            {(() => {
-              const normalized = query.trim().toLocaleLowerCase("id");
-              const visibleBooks = books.filter((book) => {
-                const matchesStatus = status === "Semua" || (status === "Telah Terbit" ? book.status === "published" : book.status === "upcoming");
-                const matchesCategory = selectedCategory === "Semua Kategori" || book.category.toLocaleLowerCase("id") === selectedCategory.toLocaleLowerCase("id");
-                const matchesQuery = !normalized || [book.title, book.author, book.category, book.synopsis].some((value) => value.toLocaleLowerCase("id").includes(normalized));
-                return matchesStatus && matchesCategory && matchesQuery;
-              });
-              return visibleBooks.length ? (
-                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                  {visibleBooks.map((book) => (
-                    <Panel key={book.id} className="overflow-hidden p-0">
-                      {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="h-64 w-full border-b border-border object-contain bg-secondary/30 p-3" /> : <div className="grid h-64 place-items-center border-b border-border bg-secondary/30"><BookOpen className="size-12 text-muted-foreground/50" /></div>}
-                      <div className="p-5">
-                        <div className="flex flex-wrap items-center gap-2"><HudChip tone={book.status === "published" ? "active" : undefined}>{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</HudChip><span className="text-xs text-muted-foreground">{book.category}</span></div>
-                        <h3 className="mt-3 text-lg font-semibold">{book.title}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground">Oleh {book.author}</p>
-                        {book.synopsis && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{book.synopsis}</p>}
-                        <div className="mt-4 space-y-1 text-xs text-muted-foreground"><p>ISBN: {book.isbn || "Dalam proses / belum tersedia"}</p><p>Format: {book.format}{book.price ? ` · ${book.price}` : ""}</p></div>
-                        {book.orderInfo && <p className="mt-3 text-sm font-medium text-primary">{book.orderInfo}</p>}
-                        <Button asChild variant="glass" className="mt-4 w-full"><Link to="/contact">Tanyakan Buku <ArrowRight /></Link></Button>
-                      </div>
-                    </Panel>
-                  ))}
-                </div>
-              ) : (
-                <Panel className="relative overflow-hidden p-8 text-center md:p-12">
-                  <div aria-hidden className="absolute inset-0 atmosphere opacity-50" />
-                  <div className="relative mx-auto flex max-w-xl flex-col items-center">
-                    <span className="grid size-16 place-items-center rounded-2xl border border-border bg-background/70 text-primary"><BookOpen className="size-7" /></span>
-                    <h3 className="mt-5 text-xl font-semibold">{catalogData.success ? "Belum ada buku pada filter ini" : "Katalog belum dapat dimuat"}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{catalogData.success ? "Buku yang ditambahkan melalui panel admin akan tampil di sini setelah dipublikasikan." : "Data katalog sementara tidak dapat diakses. Silakan coba kembali nanti."}</p>
-                    <Button asChild variant="hero" size="lg" className="mt-6"><Link to="/contact">Tanyakan Informasi Buku <ArrowRight /></Link></Button>
-                  </div>
-                </Panel>
-              );
-            })()}
-          </section>
         </div>
       </section>
     </SiteLayout>
