@@ -1,0 +1,15 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowRight, LogIn } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Button } from "@/components/ui/button";
+import { PageHero, SiteLayout } from "@/components/hey/SiteLayout";
+import { Panel } from "@/components/hey/primitives";
+import { loginUser } from "@/lib/publishing-platform";
+
+export const Route = createFileRoute("/masuk")({ head:()=>({meta:[{title:"Masuk Akun — Griya Pustaka Mandiri"}]}), component: SignIn });
+function SignIn(){
+ const navigate=useNavigate(); const login=useServerFn(loginUser); const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [busy,setBusy]=useState(false); const [error,setError]=useState(""); const [notice,setNotice]=useState("");
+ async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");setNotice("");try{const r=await login({data:{email,password}});if(!r.success){setError(r.error);return;}setNotice(r.message);setTimeout(()=>void navigate({to:"/akun"}),700);}catch{setError("Login belum dapat diproses.");}finally{setBusy(false);}}
+ return <SiteLayout><PageHero eyebrow="Akun Pengguna" title="Masuk ke akun Anda" description="Kelola pesanan, ajukan naskah, dan pantau status pengajuan melalui satu akun."/><section className="section"><div className="shell"><Panel className="mx-auto max-w-lg p-6 md:p-8"><div className="mb-6 flex items-center gap-3"><span className="grid size-11 place-items-center rounded-xl border border-border bg-primary/10 text-primary"><LogIn/></span><div><h2 className="text-xl font-semibold">Masuk</h2><p className="text-sm text-muted-foreground">Untuk pembeli dan penulis.</p></div></div><form onSubmit={submit} className="space-y-4"><div><label htmlFor="email" className="mb-2 block text-sm font-medium">Email</label><input id="email" type="email" required value={email} onChange={e=>setEmail(e.target.value)} className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm" autoComplete="email"/></div><div><label htmlFor="password" className="mb-2 block text-sm font-medium">Kata sandi</label><input id="password" type="password" required value={password} onChange={e=>setPassword(e.target.value)} className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm" autoComplete="current-password"/></div>{error&&<p role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}{notice&&<p role="status" className="rounded-lg bg-primary/10 p-3 text-sm">{notice}</p>}<Button type="submit" variant="hero" className="w-full" disabled={busy}>{busy?"Memeriksa…":"Masuk"} <ArrowRight/></Button></form><p className="mt-5 text-sm text-muted-foreground">Belum punya akun? <Link to="/daftar" className="text-primary hover:underline">Daftar gratis</Link></p><p className="mt-3 text-xs text-muted-foreground">Administrator menggunakan halaman <Link to="/login" className="text-primary hover:underline">Masuk Admin</Link>.</p></Panel></div></section></SiteLayout>;
+}
