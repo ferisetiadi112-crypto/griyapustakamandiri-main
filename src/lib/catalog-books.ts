@@ -15,6 +15,7 @@ export type CatalogBook = {
   coverUrl: string;
   backCoverUrl: string;
   price: string;
+  stockQuantity: number;
   format: string;
   orderInfo: string;
   createdAt: string;
@@ -26,7 +27,7 @@ function database() {
   return neon(url);
 }
 
-async function ensureTable() {
+export async function ensureCatalogTable() {
   const sql = database();
   await sql`CREATE TABLE IF NOT EXISTS gpm_catalog_books (
     id BIGSERIAL PRIMARY KEY,
@@ -40,6 +41,7 @@ async function ensureTable() {
     cover_url TEXT NOT NULL DEFAULT '',
     back_cover_url TEXT NOT NULL DEFAULT '',
     price TEXT NOT NULL DEFAULT '',
+    stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
     format TEXT NOT NULL DEFAULT 'Cetak',
     order_info TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -47,6 +49,7 @@ async function ensureTable() {
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS back_cover_url TEXT NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS authors TEXT NOT NULL DEFAULT '[]'`;
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS qrcbn TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS stock_quantity INTEGER NOT NULL DEFAULT 0`;
   return sql;
 }
 
@@ -64,6 +67,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
     coverUrl: String(row.cover_url ?? ""),
     backCoverUrl: String(row.back_cover_url ?? ""),
     price: String(row.price ?? ""),
+    stockQuantity: Math.max(0, Number(row.stock_quantity ?? 0)),
     format: String(row.format ?? "Cetak"),
     orderInfo: String(row.order_info ?? ""),
     createdAt: String(row.created_at ?? ""),
@@ -72,10 +76,10 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
 
 export const getCatalogBooks = createServerFn({ method: "GET" as const }).handler(async () => {
   try {
-    const sql = await ensureTable();
+    const sql = await ensureCatalogTable();
     // Include saved cover data so the public catalog can render uploaded covers.
     // Uploaded covers are resized/compressed in the admin form before being saved.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getCatalogBooks failed", error);
@@ -89,10 +93,10 @@ export const getAdminCatalogBooks = createServerFn({ method: "GET" as const }).h
     return { success: false as const, books: [] as CatalogBook[], error: "Silakan masuk sebagai admin untuk melihat data katalog." };
   }
   try {
-    const sql = await ensureTable();
+    const sql = await ensureCatalogTable();
     // Admin needs the original cover data to preview/edit existing uploads.
     // Public catalog uses getCatalogBooks(), which includes covers for public display.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getAdminCatalogBooks failed", error);
@@ -107,11 +111,11 @@ export const saveCatalogBook = createServerFn({ method: "POST" as const })
     if (!session.authenticated) return { success: false as const, error: "Sesi admin berakhir. Silakan masuk kembali." };
     if (!data.title.trim() || !data.author.trim()) return { success: false as const, error: "Judul dan penulis wajib diisi." };
     try {
-      const sql = await ensureTable();
+      const sql = await ensureCatalogTable();
       if (data.id) {
-        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, qrcbn=${data.qrcbn.trim()}, authors=${JSON.stringify(data.authors ?? [])}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
+        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, qrcbn=${data.qrcbn.trim()}, authors=${JSON.stringify(data.authors ?? [])}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, stock_quantity=${Math.max(0, Math.floor(data.stockQuantity ?? 0))}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
       } else {
-        await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.qrcbn.trim()}, ${JSON.stringify(data.authors ?? [])}, ${data.status}, ${data.coverUrl.trim()}, ${data.backCoverUrl.trim()}, ${data.price.trim()}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
+        await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.qrcbn.trim()}, ${JSON.stringify(data.authors ?? [])}, ${data.status}, ${data.coverUrl.trim()}, ${data.backCoverUrl.trim()}, ${data.price.trim()}, ${Math.max(0, Math.floor(data.stockQuantity ?? 0))}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
       }
       return { success: true as const };
     } catch (error) {
@@ -126,7 +130,7 @@ export const deleteCatalogBook = createServerFn({ method: "POST" as const })
     const session = await getAdminSession();
     if (!session.authenticated) return { success: false as const, error: "Sesi admin berakhir. Silakan masuk kembali." };
     try {
-      const sql = await ensureTable();
+      const sql = await ensureCatalogTable();
       await sql`DELETE FROM gpm_catalog_books WHERE id=${data.id}`;
       return { success: true as const };
     } catch (error) {

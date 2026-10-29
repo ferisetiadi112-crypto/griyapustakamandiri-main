@@ -11,15 +11,15 @@ import vision from "@/assets/vision-5050.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Griya Pustaka Mandiri — Mewujudkan Naskah Menjadi Buku" },
+      { title: "Griya Pustaka Mandiri — Penerbit Buku dan Toko Buku" },
       {
         name: "description",
-        content: "Layanan penerbitan buku, desain sampul, tata letak, e-book, dan pendampingan pengajuan ISBN untuk penulis Indonesia.",
+        content: "Temukan buku terbitan Griya Pustaka Mandiri dan ajukan naskah lengkap melalui proses seleksi editorial.",
       },
       { property: "og:title", content: "Griya Pustaka Mandiri — Penerbitan Buku" },
       {
         property: "og:description",
-        content: "Teman perjalanan penulis dari naskah hingga menjadi buku yang siap dibaca.",
+        content: "Menerbitkan gagasan, memperluas pengetahuan. Temukan buku pilihan dan ajukan naskah.",
       },
     ],
   }),
@@ -29,40 +29,40 @@ export const Route = createFileRoute("/")({
 const SERVICES = [
   {
     icon: BookOpen,
-    title: "Penerbitan Buku",
-    description: "Pendampingan penerbitan untuk karya ilmiah, buku referensi, buku ajar, dan naskah populer.",
-    meta: "Layanan 01",
+    title: "Koleksi Buku",
+    description: "Jelajahi buku referensi, karya akademik, buku ajar, dan bacaan pilihan dari Griya Pustaka Mandiri.",
+    meta: "Katalog",
   },
   {
     icon: PenTool,
-    title: "Desain Sampul",
-    description: "Sampul yang selaras dengan isi, karakter penulis, dan pembaca yang ingin dijangkau.",
-    meta: "Layanan 02",
+    title: "Profil Penulis",
+    description: "Kenali penulis dan gagasan yang membentuk setiap karya terbitan kami.",
+    meta: "Komunitas",
   },
   {
     icon: BookText,
-    title: "Tata Letak Naskah",
-    description: "Penataan isi buku agar rapi, konsisten, nyaman dibaca, dan siap masuk tahap pracetak.",
-    meta: "Layanan 03",
+    title: "Cetak & Digital",
+    description: "Temukan pilihan buku cetak dan digital sesuai format yang tersedia.",
+    meta: "Format",
   },
   {
     icon: FileCheck,
-    title: "Pendampingan ISBN",
-    description: "Bantuan persiapan berkas dan proses pengajuan ISBN sesuai ketentuan yang berlaku.",
-    meta: "Layanan 04",
+    title: "Menjadi Penulis",
+    description: "Ajukan naskah lengkap untuk seleksi editorial tanpa biaya pendaftaran atau paket penerbitan.",
+    meta: "Kolaborasi",
   },
 ];
 
 const STEPS = [
-  { index: "01", title: "Kirim Naskah", description: "Siapkan naskah dan informasi dasar buku untuk ditinjau." },
-  { index: "02", title: "Tinjau & Sepakati", description: "Diskusikan kebutuhan, layanan, biaya, dan jadwal pengerjaan." },
-  { index: "03", title: "Desain & Pracetak", description: "Naskah ditata dan sampul disiapkan untuk diperiksa penulis." },
-  { index: "04", title: "Terbit & Serahkan", description: "Tahap ISBN, berkas digital, dan cetak dilakukan sesuai paket yang disepakati." },
+  { index: "01", title: "Ajukan Naskah", description: "Buat akun dan kirim naskah lengkap untuk seleksi." },
+  { index: "02", title: "Seleksi Editorial", description: "Editor menilai kualitas, relevansi, orisinalitas, dan potensi pembaca." },
+  { index: "03", title: "Perjanjian Kerja Sama", description: "Hak penerbitan, anggaran produksi, dan royalti disepakati secara tertulis." },
+  { index: "04", title: "Terbit & Dipasarkan", description: "Penerbit menyiapkan buku dan memasarkannya melalui katalog." },
 ];
 
 const HIGHLIGHTS = [
   { icon: BookOpen, title: "Karya Akademik", description: "Buku referensi, buku ajar, monograf, dan pengembangan dari karya ilmiah.", meta: "Jenis naskah" },
-  { icon: Printer, title: "Buku Cetak & Digital", description: "Pilihan layanan untuk buku cetak, e-book PDF, atau kombinasi keduanya.", meta: "Format keluaran" },
+  { icon: Printer, title: "Buku Cetak & Digital", description: "Jelajahi buku yang tersedia dalam format cetak atau digital melalui katalog resmi.", meta: "Format keluaran" },
 ];
 
 function Home() {
@@ -79,26 +79,26 @@ function Home() {
             <HudChip tone="active">Penerbitan · Buku · Gagasan</HudChip>
             <h1 className="mt-8 text-balance font-display text-5xl font-bold leading-[0.95] sm:text-6xl md:text-7xl lg:text-8xl">
               <span className="block tracking-tight text-gradient text-4xl sm:text-5xl md:text-6xl lg:text-7xl">GRIYA PUSTAKA<br />MANDIRI</span>
-              <span className="mt-5 block text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">Wujudkan Naskah Menjadi Buku.</span>
+              <span className="mt-5 block text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">Menerbitkan Gagasan, Memperluas Pengetahuan.</span>
             </h1>
             <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Kami mendampingi penulis menyiapkan karya menjadi buku melalui layanan penerbitan, desain sampul, tata letak, e-book, dan pendampingan pengajuan ISBN.
+              Temukan buku pilihan dari Griya Pustaka Mandiri atau ajukan naskah lengkap untuk dipertimbangkan melalui proses seleksi editorial dan kerja sama penerbitan yang transparan.
             </p>
             <div className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <Button asChild variant="hero" size="lg">
-                <Link to="/paket-penerbitan">Lihat Paket Penerbitan <ArrowRight /></Link>
+                <Link to="/katalog">Jelajahi Buku <ArrowRight /></Link>
               </Button>
               <Button asChild variant="glass" size="lg">
-                <Link to="/contact">Konsultasi Naskah</Link>
+                <Link to="/menjadi-penulis">Menjadi Penulis</Link>
               </Button>
             </div>
           </div>
           <dl className="mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
             {[
-              { label: "Fokus", value: "Penerbitan Buku" },
-              { label: "Naskah", value: "Akademik & Umum" },
+              { label: "Fokus", value: "Buku Pilihan" },
+              { label: "Naskah", value: "Seleksi Editorial" },
               { label: "Format", value: "Cetak & Digital" },
-              { label: "Pendampingan", value: "Dari Naskah ke Buku" },
+              { label: "Kerja Sama", value: "Royalti Penulis" },
             ].map((item) => (
               <div key={item.label} className="bg-background/70 px-5 py-6 backdrop-blur-md">
                 <dt className="hud-label">{item.label}</dt>
@@ -111,7 +111,7 @@ function Home() {
 
       <section className="section relative">
         <div className="shell">
-          <SectionHeading eyebrow="Layanan Kami" title="Setiap gagasan layak dipersiapkan dengan baik" description="Dari penyiapan naskah hingga proses pracetak, layanan disusun agar penulis mengetahui apa yang dikerjakan dan apa yang akan diterima." />
+          <SectionHeading eyebrow="Mengapa Griya Pustaka Mandiri" title="Buku yang dipilih dengan tujuan" description="Kami membangun katalog melalui seleksi editorial dan kemitraan dengan penulis, lalu menghadirkan karya kepada pembaca melalui penjualan buku." />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {SERVICES.map((service) => <FeatureCard key={service.title} {...service} />)}
           </div>
@@ -127,7 +127,7 @@ function Home() {
               <div className="flex flex-wrap gap-3"><HudChip tone="active">Ruang untuk Gagasan</HudChip><HudChip>Proses Transparan</HudChip></div>
               <div className="max-w-xl">
                 <h2 className="text-balance text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">Buku yang baik dimulai dari proses yang jelas.</h2>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">Kami mengutamakan komunikasi mengenai kebutuhan naskah, cakupan layanan, biaya, revisi, dan tahapan pengerjaan sebelum proses penerbitan dimulai.</p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">Naskah dipilih melalui seleksi editorial. Untuk karya yang disetujui, hak penerbitan, anggaran produksi, jadwal, dan royalti dibahas dalam perjanjian kerja sama.</p>
                 <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2"><HudLabel>Komunikasi Terbuka</HudLabel><HudLabel>Persetujuan Penulis</HudLabel></div>
               </div>
             </div>
@@ -137,7 +137,7 @@ function Home() {
 
       <section className="section">
         <div className="shell">
-          <SectionHeading eyebrow="Alur Penerbitan" title="Empat langkah menuju buku" description="Setiap proyek disesuaikan dengan kondisi naskah dan layanan yang disepakati bersama penulis." />
+          <SectionHeading eyebrow="Alur Penerbitan" title="Empat langkah menuju buku" description="Naskah yang dipilih melalui seleksi editorial dilanjutkan dengan perjanjian, produksi, dan pemasaran buku." />
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((step) => <StepCard key={step.index} {...step} />)}
           </div>
@@ -146,11 +146,11 @@ function Home() {
 
       <section className="section pt-0">
         <div className="shell">
-          <SectionHeading eyebrow="Pilihan Layanan" title="Format dan kebutuhan yang fleksibel" description="Pilih layanan sesuai kebutuhan naskah. Ketersediaan fasilitas, cetak, dan pengajuan ISBN akan dijelaskan dalam rincian paket." />
+          <SectionHeading eyebrow="Koleksi dan Kerja Sama" title="Buku untuk pembaca, ruang bagi penulis" description="Jelajahi karya yang telah terbit atau ajukan naskah lengkap untuk dipertimbangkan oleh tim editorial." />
           <div className="mt-12 grid gap-5 md:grid-cols-2">
             {HIGHLIGHTS.map((item) => <FeatureCard key={item.title} {...item} />)}
           </div>
-          <p className="mt-6 text-sm text-muted-foreground">Informasi paket dan fasilitas tersedia pada halaman <Link to="/paket-penerbitan" className="text-primary hover:underline">Paket Penerbitan</Link>.</p>
+          <p className="mt-6 text-sm text-muted-foreground">Pengajuan naskah gratis dan tidak menjamin penerbitan. Naskah yang dipilih akan dibahas melalui perjanjian kerja sama.</p>
         </div>
       </section>
 
@@ -161,10 +161,10 @@ function Home() {
             <div className="relative mx-auto flex max-w-2xl flex-col items-center">
               <HudChip tone="active">Mulai Perjalanan Buku Anda</HudChip>
               <h2 className="mt-6 text-balance text-3xl font-semibold sm:text-4xl">Naskah Anda, langkah berikutnya.</h2>
-              <p className="mt-4 text-pretty text-muted-foreground">Pelajari pilihan paket atau hubungi kami untuk membahas kebutuhan penerbitan naskah.</p>
+              <p className="mt-4 text-pretty text-muted-foreground">Jelajahi buku yang tersedia atau ajukan naskah lengkap untuk dipertimbangkan oleh tim editorial.</p>
               <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-                <Button asChild variant="hero" size="lg"><Link to="/paket-penerbitan">Bandingkan Paket <ArrowRight /></Link></Button>
-                <Button asChild variant="glass" size="lg"><Link to="/contact">Hubungi Penerbit</Link></Button>
+                <Button asChild variant="hero" size="lg"><Link to="/katalog">Jelajahi Buku <ArrowRight /></Link></Button>
+                <Button asChild variant="glass" size="lg"><Link to="/menjadi-penulis">Ajukan Naskah</Link></Button>
               </div>
             </div>
           </Panel>

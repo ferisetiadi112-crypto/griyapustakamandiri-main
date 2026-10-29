@@ -31,8 +31,8 @@ const VALUES = [
   },
   {
     icon: HeartHandshake,
-    title: "Kolaborasi dengan Penulis",
-    description: "Ruang lingkup layanan, revisi, biaya, dan hasil akhir dibicarakan bersama sebelum pengerjaan.",
+    title: "Kerja Sama dengan Penulis",
+    description: "Hak penerbitan, biaya produksi, jadwal, dan royalti ditetapkan dalam perjanjian tertulis.",
   },
   {
     icon: ShieldCheck,
@@ -59,11 +59,11 @@ function About() {
           <div className="flex flex-col gap-6">
             <SectionHeading
               eyebrow="Komitmen"
-              title="Penerbitan yang dimulai dari komunikasi"
-              description="Setiap naskah memiliki kebutuhan yang berbeda. Karena itu, kami mengutamakan peninjauan awal, penjelasan cakupan layanan, kesepakatan biaya, serta persetujuan penulis pada tahapan penting."
+              title="Penerbitan yang berawal dari seleksi dan kemitraan"
+              description="Setiap naskah dinilai berdasarkan orisinalitas, kualitas, relevansi, dan potensi pembaca. Naskah yang dipilih akan dibahas melalui perjanjian kerja sama sebelum produksi dimulai."
             />
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Layanan dapat mencakup penataan naskah, desain sampul, penyediaan berkas digital, pendampingan pengajuan ISBN, dan produksi cetak sesuai paket yang disepakati. Fasilitas akhir akan dinyatakan secara tertulis sebelum pekerjaan dimulai.
+              Pendaftaran dan seleksi naskah tidak dikenai biaya. Untuk karya yang disetujui, penerbit menanggung biaya produksi sesuai anggaran dan perjanjian; penulis menerima royalti berdasarkan penjualan sesuai kontrak.
             </p>
           </div>
           <Panel className="flex flex-col gap-6">
