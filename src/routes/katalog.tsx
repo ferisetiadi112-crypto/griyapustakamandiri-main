@@ -223,7 +223,7 @@ function Katalog() {
                 <h2 id="book-detail-title" className="mt-2 pr-7 text-2xl font-bold">{selectedBook.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground">Oleh {selectedBook.author}</p>
                 <p className="mt-3 text-sm">{selectedBook.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
-                {selectedBook.synopsis && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{selectedBook.synopsis}</p>}
+                {selectedBook.synopsis && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{selectedBook.synopsis.length > 350 ? `${selectedBook.synopsis.slice(0, 350).trimEnd()}…` : selectedBook.synopsis}</p>}
                 <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
                   <p><span className="text-muted-foreground">ISBN:</span> {selectedBook.isbn || "Dalam proses / belum tersedia"}</p>
                   <p><span className="text-muted-foreground">Format:</span> {selectedBook.format}</p>
