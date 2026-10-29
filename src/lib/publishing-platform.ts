@@ -348,7 +348,7 @@ export const reviewSubmission = createServerFn({ method: "POST" as const })
     if (!existing.length) return { success: false as const, error: "Pengajuan tidak ditemukan." };
     await sql`UPDATE gpm_author_submissions SET status=${data.status},editor_recommendation=${data.recommendation.trim()},editorial_notes=${data.notes.trim()},final_decision=${(data.finalDecision ?? "").trim()},updated_at=NOW() WHERE id=${data.submissionId}`;
     await sql`INSERT INTO gpm_submission_events (submission_id,actor_user_id,old_status,new_status,note) VALUES (${data.submissionId},${user?.id ?? null},${String((existing[0] as {status:string}).status)},${data.status},${data.notes.trim()})`;
-    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user!.id},${user!.email},'submission.status_changed','submission',${String(data.submissionId)},${data.status})`;
+    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user?.id ?? null},${user?.email ?? adminSession.username ?? "admin"},'submission.status_changed','submission',${String(data.submissionId)},${data.status})`;
     return { success: true as const };
   });
 
@@ -409,7 +409,7 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
     if (data.paymentStatus === "paid" && !adminSession.authenticated && !user?.roles.some((role) => role === "admin" || role === "finance")) return { success: false as const, error: "Hanya admin atau keuangan yang dapat memverifikasi pembayaran." };
     const sql = await ensurePlatformTables();
     await sql`UPDATE gpm_orders SET order_status=${data.orderStatus},payment_status=${data.paymentStatus},shipping_method=${data.shippingMethod.trim()},tracking_number=${data.trackingNumber.trim()},admin_note=${data.adminNote.trim()},updated_at=NOW() WHERE id=${data.orderId}`;
-    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user!.id},${user!.email},'order.updated','order',${String(data.orderId)},${data.orderStatus + '/' + data.paymentStatus})`;
+    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user?.id ?? null},${user?.email ?? adminSession.username ?? "admin"},'order.updated','order',${String(data.orderId)},${data.orderStatus + '/' + data.paymentStatus})`;
     return { success: true as const };
   });
 
