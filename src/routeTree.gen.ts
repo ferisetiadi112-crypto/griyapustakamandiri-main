@@ -33,6 +33,7 @@ import { Route as ApiAuthTiktokRouteImport } from './routes/api.auth.tiktok'
 import { Route as ApiAuthYoutubeRouteImport } from './routes/api.auth.youtube'
 import { Route as ApiAuthYoutubeCallbackRouteImport } from './routes/api.auth.youtube.callback'
 import { Route as PaketPenerbitanRouteImport } from './routes/paket-penerbitan'
+import { Route as KatalogRouteImport } from './routes/katalog'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const ContactRoute = ContactRouteImport.update({
 const PaketPenerbitanRoute = PaketPenerbitanRouteImport.update({
   id: '/paket-penerbitan',
   path: '/paket-penerbitan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KatalogRoute = KatalogRouteImport.update({
+  id: '/katalog',
+  path: '/katalog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -160,8 +166,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/paket-penerbitan': typeof PaketPenerbitanRoute
-  '/paket-penerbitan': typeof PaketPenerbitanRoute
-  '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/katalog': typeof KatalogRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -188,6 +193,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/katalog': typeof KatalogRoute
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -242,6 +248,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/paket-penerbitan'
+    | '/katalog'
     | '/dashboard'
     | '/future'
     | '/how-it-works'
@@ -268,6 +275,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/paket-penerbitan'
+    | '/katalog'
     | '/future'
     | '/how-it-works'
     | '/login'
