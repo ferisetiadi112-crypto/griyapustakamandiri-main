@@ -338,14 +338,16 @@ export const reviewSubmission = createServerFn({ method: "POST" as const })
     requireRole(user, ["editor","admin","leadership"]);
     const allowed = ["administrative_review","editorial_review","revision_requested","recommended_for_negotiation","rejected","contracted","in_production","published"];
     if (!allowed.includes(data.status)) return { success: false as const, error: "Status pengajuan tidak valid." };
-    if ((data.status === "recommended_for_negotiation" || data.status === "rejected" || data.status === "contracted") && !user!.roles.some((role) => role === "admin" || role === "leadership")) {
+    const canMakeFinalDecision = adminSession.authenticated || Boolean(user?.roles.some((role) => role === "admin" || role === "leadership"));
+    if ((data.status === "rejected" || data.status === "contracted") && !canMakeFinalDecision) return { success: false as const, error: "Keputusan akhir hanya dapat dilakukan admin atau pimpinan." };
+    if (false) {
       if (data.status === "rejected" || data.status === "contracted") return { success: false as const, error: "Keputusan akhir hanya dapat dilakukan admin atau pimpinan." };
     }
     const sql = await ensurePlatformTables();
     const existing = await sql`SELECT status,reference_code FROM gpm_author_submissions WHERE id=${data.submissionId} LIMIT 1`;
     if (!existing.length) return { success: false as const, error: "Pengajuan tidak ditemukan." };
     await sql`UPDATE gpm_author_submissions SET status=${data.status},editor_recommendation=${data.recommendation.trim()},editorial_notes=${data.notes.trim()},final_decision=${(data.finalDecision ?? "").trim()},updated_at=NOW() WHERE id=${data.submissionId}`;
-    await sql`INSERT INTO gpm_submission_events (submission_id,actor_user_id,old_status,new_status,note) VALUES (${data.submissionId},${user!.id},${String((existing[0] as {status:string}).status)},${data.status},${data.notes.trim()})`;
+    await sql`INSERT INTO gpm_submission_events (submission_id,actor_user_id,old_status,new_status,note) VALUES (${data.submissionId},${user?.id ?? null},${String((existing[0] as {status:string}).status)},${data.status},${data.notes.trim()})`;
     await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user!.id},${user!.email},'submission.status_changed','submission',${String(data.submissionId)},${data.status})`;
     return { success: true as const };
   });
