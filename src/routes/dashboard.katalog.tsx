@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { cloneElement, useState, type ReactElement, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, BookOpen, ExternalLink, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -142,6 +142,6 @@ function CatalogAdmin() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div><label className="mb-2 block text-sm font-medium">{label}</label>{React.cloneElement(children as React.ReactElement, { className: "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm outline-none focus:border-primary/60" })}</div>;
+function Field({ label, children }: { label: string; children: ReactNode }) {
+  return <div><label className="mb-2 block text-sm font-medium">{label}</label>{cloneElement(children as ReactElement, { className: "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm outline-none focus:border-primary/60" })}</div>;
 }
