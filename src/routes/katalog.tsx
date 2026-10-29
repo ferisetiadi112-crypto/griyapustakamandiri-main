@@ -19,18 +19,88 @@ export const Route = createFileRoute("/katalog")({
 });
 
 const CATEGORIES = [
-  { name: "Pendidikan", description: "Pembelajaran, pendidikan, dan buku ajar" },
-  { name: "Sosial & Humaniora", description: "Masyarakat, budaya, dan kehidupan sosial" },
-  { name: "Pekerjaan Sosial", description: "Praktik, rehabilitasi, dan pemberdayaan" },
-  { name: "Pengembangan Masyarakat", description: "Partisipasi, komunitas, dan pembangunan" },
-  { name: "Kebijakan Publik", description: "Kebijakan, tata kelola, dan pelayanan publik" },
-  { name: "Ilmu Pemerintahan", description: "Pemerintahan, administrasi, dan demokrasi" },
-  { name: "Ekonomi & Bisnis", description: "Kewirausahaan, manajemen, dan ekonomi" },
-  { name: "Agama & Spiritualitas", description: "Kajian keagamaan dan nilai spiritual" },
-  { name: "Psikologi", description: "Perilaku, perkembangan, dan kesejahteraan" },
-  { name: "Sastra & Literatur", description: "Esai, puisi, cerita, dan karya kreatif" },
-  { name: "Kesehatan", description: "Kesehatan masyarakat dan kesejahteraan" },
-  { name: "Teknologi", description: "Inovasi, sistem informasi, dan teknologi" },
+  { name: "Administrasi" },
+  { name: "Agama" },
+  { name: "Agama Islam" },
+  { name: "AI" },
+  { name: "Akuntansi" },
+  { name: "Antologi" },
+  { name: "Antropologi" },
+  { name: "Arsitektur" },
+  { name: "Bahasa" },
+  { name: "Biografi" },
+  { name: "Biologi" },
+  { name: "Bisnis" },
+  { name: "Branding" },
+  { name: "Budaya" },
+  { name: "Buku Anak" },
+  { name: "Cerpen" },
+  { name: "Digital Marketing" },
+  { name: "EISBN" },
+  { name: "Ekonomi" },
+  { name: "Featured" },
+  { name: "Filsafat" },
+  { name: "Fisika" },
+  { name: "Fotografi" },
+  { name: "Geografi" },
+  { name: "Geologi" },
+  { name: "Hukum" },
+  { name: "Ilmu Alam" },
+  { name: "Informatika" },
+  { name: "IPAS" },
+  { name: "K3" },
+  { name: "Kedokteran" },
+  { name: "Kehutanan" },
+  { name: "Kelautan" },
+  { name: "Keperawatan" },
+  { name: "Kesehatan" },
+  { name: "Keterampilan" },
+  { name: "Keuangan" },
+  { name: "Kimia" },
+  { name: "Komputasi" },
+  { name: "Komputer" },
+  { name: "Komunikasi" },
+  { name: "Kriminologi" },
+  { name: "Manajemen" },
+  { name: "Marketing" },
+  { name: "Matematika" },
+  { name: "Mesin" },
+  { name: "Motivasi" },
+  { name: "Novel" },
+  { name: "Olahraga" },
+  { name: "Parenting" },
+  { name: "Pariwisata" },
+  { name: "Pendidikan" },
+  { name: "Penelitian" },
+  { name: "Pengembangan Diri" },
+  { name: "Perikanan" },
+  { name: "Pertanian" },
+  { name: "Peternakan" },
+  { name: "PKn" },
+  { name: "Politik" },
+  { name: "Psikologi" },
+  { name: "Puisi" },
+  { name: "QRCBN" },
+  { name: "Sains" },
+  { name: "Sastra" },
+  { name: "SDM" },
+  { name: "Segera Terbit" },
+  { name: "Sejarah" },
+  { name: "Seni" },
+  { name: "Sistem Informasi" },
+  { name: "Sosial" },
+  { name: "Sosiologi" },
+  { name: "Statistik" },
+  { name: "Teknik" },
+  { name: "Teknik Elektro" },
+  { name: "Teknik Industri" },
+  { name: "Teknik Komputer" },
+  { name: "Teknik Mesin" },
+  { name: "Teknik Pangan" },
+  { name: "Teknik Sipil" },
+  { name: "Teknologi" },
+  { name: "Telah Terbit" },
+  { name: "Uncategorized" },
 ];
 
 const STATUS_FILTERS = ["Semua", "Telah Terbit", "Segera Terbit"] as const;
@@ -45,7 +115,7 @@ function Katalog() {
     return CATEGORIES.filter((category) => {
       const matchesQuery = !normalized ||
         category.name.toLocaleLowerCase("id").includes(normalized) ||
-        category.description.toLocaleLowerCase("id").includes(normalized);
+        category.name.toLocaleLowerCase("id").includes(normalized);
       const matchesCategory = selectedCategory === "Semua Kategori" || category.name === selectedCategory;
       return matchesQuery && matchesCategory;
     });
@@ -83,35 +153,58 @@ function Katalog() {
             </div>
           </Panel>
 
-          <div className="mt-12">
-            <SectionHeading eyebrow="Bidang Katalog" title="Pilih bidang yang ingin Anda jelajahi" description="Kategori ini merupakan struktur awal katalog dan bukan pernyataan bahwa setiap kategori sudah memiliki judul buku terbit." />
-            <div className="mt-8 flex flex-wrap gap-2">
-              <button type="button" onClick={() => setSelectedCategory("Semua Kategori")} aria-pressed={selectedCategory === "Semua Kategori"} className={`rounded-full border px-4 py-2.5 text-sm transition-colors ${selectedCategory === "Semua Kategori" ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>Semua Kategori</button>
-              {CATEGORIES.map((category) => (
-                <button key={category.name} type="button" onClick={() => setSelectedCategory(category.name)} aria-pressed={selectedCategory === category.name} className={`rounded-full border px-4 py-2.5 text-sm transition-colors ${selectedCategory === category.name ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>{category.name}</button>
-              ))}
-            </div>
-            {visibleCategories.length > 0 ? (
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {visibleCategories.map((category, index) => (
-                  <Panel key={category.name} interactive className="group flex h-full flex-col gap-5 p-5 md:p-6">
-                    <div className="flex items-start justify-between">
-                      <span className="grid size-11 place-items-center rounded-xl border border-border bg-surface/70 text-primary">{index % 3 === 0 ? <BookOpen className="size-5" /> : index % 3 === 1 ? <BookText className="size-5" /> : <BookMarked className="size-5" />}</span>
-                      <span className="font-mono text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-                    </div>
-                    <div><h3 className="text-lg font-semibold">{category.name}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{category.description}</p></div>
-                    <div className="mt-auto border-t border-border pt-4"><span className="text-xs text-muted-foreground">Kategori katalog</span></div>
-                  </Panel>
-                ))}
-              </div>
-            ) : (
-              <Panel className="mt-8 p-8 text-center">
-                <Search className="mx-auto size-7 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-semibold">Kategori tidak ditemukan</h3>
-                <p className="mt-2 text-sm text-muted-foreground">Coba kata kunci lain atau tampilkan semua kategori.</p>
-                <Button variant="glass" className="mt-5" onClick={() => { setQuery(""); setSelectedCategory("Semua Kategori"); }}>Reset pencarian</Button>
+          <div className="mt-12 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+            <aside className="self-start lg:sticky lg:top-28" aria-label="Navigasi kategori buku">
+              <Panel className="overflow-hidden p-0">
+                <div className="border-b border-border px-5 py-4">
+                  <HudLabel>Kategori Buku</HudLabel>
+                  <h2 className="mt-1 text-lg font-semibold">Jelajahi bidang</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">Pilih kategori untuk menyaring katalog.</p>
+                </div>
+                <div className="max-h-[65vh] overflow-y-auto p-2">
+                  <button type="button" onClick={() => setSelectedCategory("Semua Kategori")} aria-pressed={selectedCategory === "Semua Kategori"} className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${selectedCategory === "Semua Kategori" ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}>
+                    <span>Semua Kategori</span>
+                    {selectedCategory === "Semua Kategori" && <span aria-hidden="true">✓</span>}
+                  </button>
+                  {CATEGORIES.map((category) => (
+                    <button key={category.name} type="button" onClick={() => setSelectedCategory(category.name)} aria-pressed={selectedCategory === category.name} className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${selectedCategory === category.name ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}>
+                      <span>{category.name}</span>
+                      {selectedCategory === category.name && <span aria-hidden="true">✓</span>}
+                    </button>
+                  ))}
+                </div>
               </Panel>
-            )}
+            </aside>
+
+            <div className="min-w-0">
+              <SectionHeading eyebrow="Bidang Katalog" title={selectedCategory === "Semua Kategori" ? "Pilih bidang yang ingin Anda jelajahi" : selectedCategory} description="Daftar kategori membantu pembaca menelusuri topik. Kategori yang tampil belum berarti sudah memiliki buku terbit." />
+              <div className="mt-6 flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">{visibleCategories.length} kategori ditampilkan</p>
+                {selectedCategory !== "Semua Kategori" && <button type="button" onClick={() => setSelectedCategory("Semua Kategori")} className="text-sm text-primary hover:underline">Hapus filter</button>}
+              </div>
+              {visibleCategories.length > 0 ? (
+                <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {visibleCategories.map((category, index) => (
+                    <button key={category.name} type="button" onClick={() => setSelectedCategory(category.name)} className="text-left">
+                      <Panel interactive className={`group flex h-full min-h-36 flex-col gap-4 p-5 transition-colors ${selectedCategory === category.name ? "border-primary/50 bg-primary/5" : ""}`}>
+                        <div className="flex items-start justify-between">
+                          <span className="grid size-10 place-items-center rounded-xl border border-border bg-surface/70 text-primary">{index % 3 === 0 ? <BookOpen className="size-5" /> : index % 3 === 1 ? <BookText className="size-5" /> : <BookMarked className="size-5" />}</span>
+                          <span className="font-mono text-xs text-muted-foreground">{String(CATEGORIES.findIndex((item) => item.name === category.name) + 1).padStart(2, "0")}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{category.name}</h3><ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" /></div>
+                      </Panel>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <Panel className="mt-6 p-8 text-center">
+                  <Search className="mx-auto size-7 text-muted-foreground" />
+                  <h3 className="mt-4 text-lg font-semibold">Kategori tidak ditemukan</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">Coba kata kunci lain atau tampilkan semua kategori.</p>
+                  <Button variant="glass" className="mt-5" onClick={() => { setQuery(""); setSelectedCategory("Semua Kategori"); }}>Reset pencarian</Button>
+                </Panel>
+              )}
+            </div>
           </div>
 
           <section className="mt-16">
