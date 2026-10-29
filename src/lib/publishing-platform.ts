@@ -372,7 +372,7 @@ export const createCheckoutOrder = createServerFn({ method: "POST" as const })
     const subtotal = orderItems.reduce((sum, item) => sum + item.lineTotal, 0);
     const user = await currentUser().catch(() => null);
     const orderNumber = reference("GPM-ORD");
-    const paymentConfigured = Boolean(process.env["PAYMENT_GATEWAY_PROVIDER"] && process.env["PAYMENT_GATEWAY_API_KEY"]);
+    const paymentConfigured = false; // No provider adapter is active until a real gateway is selected and tested.
     const paymentStatus = paymentConfigured ? "pending" : "gateway_not_configured";
     const created = await sql`INSERT INTO gpm_orders (order_number,user_id,customer_name,customer_email,customer_phone,shipping_address,shipping_city,shipping_postal_code,shipping_method,subtotal,total,payment_provider,payment_status,order_status) VALUES (${orderNumber},${user?.id ?? null},${data.customerName.trim()},${data.email.trim().toLowerCase()},${data.phone.trim()},${data.address.trim()},${data.city.trim()},${data.postalCode.trim()},${data.shippingMethod.trim()},${subtotal},${subtotal},${process.env["PAYMENT_GATEWAY_PROVIDER"] ?? ""},${paymentStatus},'pending_payment') RETURNING id`;
     const reservedItems: { bookId: number; quantity: number }[] = [];
