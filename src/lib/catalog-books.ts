@@ -70,6 +70,23 @@ export const getCatalogBooks = createServerFn({ method: "GET" as const }).handle
   }
 });
 
+export const getAdminCatalogBooks = createServerFn({ method: "GET" as const }).handler(async () => {
+  const session = await getAdminSession();
+  if (!session.authenticated) {
+    return { success: false as const, books: [] as CatalogBook[], error: "Silakan masuk sebagai admin untuk melihat data katalog." };
+  }
+  try {
+    const sql = await ensureTable();
+    // Admin needs the original cover data to preview/edit existing uploads.
+    // Public catalog uses getCatalogBooks(), which omits inline Base64 images to keep responses lightweight.
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
+  } catch (error) {
+    console.error("getAdminCatalogBooks failed", error);
+    return { success: false as const, books: [] as CatalogBook[], error: error instanceof Error ? error.message : "Gagal memuat katalog admin." };
+  }
+});
+
 export const saveCatalogBook = createServerFn({ method: "POST" as const })
   .validator((input: Omit<CatalogBook, "id" | "createdAt"> & { id?: number }) => input)
   .handler(async ({ data }) => {
