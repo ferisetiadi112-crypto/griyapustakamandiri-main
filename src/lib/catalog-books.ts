@@ -10,6 +10,7 @@ export type CatalogBook = {
   category: string;
   synopsis: string;
   isbn: string;
+  qrcbn: string;
   status: "published" | "upcoming";
   coverUrl: string;
   backCoverUrl: string;
@@ -58,6 +59,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
     category: String(row.category ?? "Umum"),
     synopsis: String(row.synopsis ?? ""),
     isbn: String(row.isbn ?? ""),
+    qrcbn: String(row.qrcbn ?? ""),
     status: row.status === "published" ? "published" : "upcoming",
     coverUrl: String(row.cover_url ?? ""),
     backCoverUrl: String(row.back_cover_url ?? ""),
@@ -90,7 +92,7 @@ export const getAdminCatalogBooks = createServerFn({ method: "GET" as const }).h
     const sql = await ensureTable();
     // Admin needs the original cover data to preview/edit existing uploads.
     // Public catalog uses getCatalogBooks(), which includes covers for public display.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getAdminCatalogBooks failed", error);
@@ -107,7 +109,7 @@ export const saveCatalogBook = createServerFn({ method: "POST" as const })
     try {
       const sql = await ensureTable();
       if (data.id) {
-        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, authors=${JSON.stringify(data.authors ?? [])}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, qrcbn=${data.qrcbn.trim()}, authors=${JSON.stringify(data.authors ?? [])}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
+        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, qrcbn=${data.qrcbn.trim()}, authors=${JSON.stringify(data.authors ?? [])}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
       } else {
         await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.qrcbn.trim()}, ${JSON.stringify(data.authors ?? [])}, ${data.status}, ${data.coverUrl.trim()}, ${data.backCoverUrl.trim()}, ${data.price.trim()}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
       }
