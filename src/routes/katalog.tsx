@@ -114,17 +114,6 @@ function Katalog() {
   const [selectedCategory, setSelectedCategory] = useState("Semua Kategori");
   const [status, setStatus] = useState<(typeof STATUS_FILTERS)[number]>("Semua");
 
-  const visibleCategories = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase("id");
-    return CATEGORIES.filter((category) => {
-      const matchesQuery = !normalized ||
-        category.name.toLocaleLowerCase("id").includes(normalized) ||
-        category.name.toLocaleLowerCase("id").includes(normalized);
-      const matchesCategory = selectedCategory === "Semua Kategori" || category.name === selectedCategory;
-      return matchesQuery && matchesCategory;
-    });
-  }, [query, selectedCategory]);
-
   return (
     <SiteLayout>
       <PageHero
