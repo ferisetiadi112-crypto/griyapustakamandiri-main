@@ -74,6 +74,7 @@ export async function ensurePlatformTables() {
     id BIGSERIAL PRIMARY KEY,
     submission_id BIGINT NOT NULL UNIQUE REFERENCES gpm_author_submissions(id),
     user_id UUID NOT NULL REFERENCES gpm_users(id),
+    book_id BIGINT,
     contract_reference TEXT NOT NULL UNIQUE,
     royalty_percent NUMERIC(5,2) NOT NULL,
     net_revenue_definition TEXT NOT NULL,
@@ -85,6 +86,7 @@ export async function ensurePlatformTables() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
+  await sql`ALTER TABLE gpm_publishing_contracts ADD COLUMN IF NOT EXISTS book_id BIGINT`;
   await sql`CREATE TABLE IF NOT EXISTS gpm_orders (
     id BIGSERIAL PRIMARY KEY,
     order_number TEXT NOT NULL UNIQUE,
