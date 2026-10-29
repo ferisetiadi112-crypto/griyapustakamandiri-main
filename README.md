@@ -1,6 +1,6 @@
 # Orbital Foundation
 
-Create the initial UI/UX foundation for a new web platform called "Hey5050".
+Create the initial UI/UX foundation for a new web platform called "Griya Pustaka Mandiri".
 
 IMPORTANT:
 
@@ -12,11 +12,11 @@ The goal of this phase is to establish a premium, futuristic, clean, highly poli
 
 ==================================================
 
-1. CORE CONCEPT — HEY5050
+1. CORE CONCEPT — GRIYA PUSTAKA MANDIRI
 
 ==================================================
 
-Hey5050 represents a vision of technology in the year 5050.
+Griya Pustaka Mandiri represents a vision of technology in the year 5050.
 
 It is a futuristic technology platform built around the idea that humans and intelligent technology work together seamlessly.
 
@@ -90,15 +90,15 @@ rather than:
 
 ==================================================
 
-The name "HEY5050" represents communication between humans and the future.
+The name "GRIYA PUSTAKA MANDIRI" represents communication between humans and the future.
 
 The platform should communicate this philosophy:
 
 "Technology from the future, designed for humans today."
 
-The website should visually communicate that Hey5050 is building the foundation for future digital creation, intelligent automation, and connected technology.
+The website should visually communicate that Griya Pustaka Mandiri is building the foundation for future digital creation, intelligent automation, and connected technology.
 
-Do not make TikTok the identity of Hey5050.
+Do not make TikTok the identity of Griya Pustaka Mandiri.
 
 TikTok is only one possible integration inside the platform.
 
@@ -236,7 +236,7 @@ The public navigation should communicate that TikTok is only one component of a 
 
 Suggested navigation:
 
-HEY5050 logo
+GRIYA PUSTAKA MANDIRI logo
 
 Home
 
@@ -266,7 +266,7 @@ Create a highly polished futuristic hero section.
 
 The hero should immediately communicate:
 
-HEY5050
+GRIYA PUSTAKA MANDIRI
 
 "The Future Starts Here."
 
@@ -300,7 +300,7 @@ Secondary CTA:
 
 Do NOT use "Connect with TikTok" as the primary hero CTA.
 
-The hero must sell the vision of Hey5050 first.
+The hero must sell the vision of Griya Pustaka Mandiri first.
 
 ==================================================
 
@@ -314,7 +314,7 @@ Headline:
 
 "Built for the World Beyond Today"
 
-Explain that Hey5050 explores how technology, automation, artificial intelligence, and digital creativity can evolve together.
+Explain that Griya Pustaka Mandiri explores how technology, automation, artificial intelligence, and digital creativity can evolve together.
 
 Use three or four premium cards:
 
@@ -384,7 +384,7 @@ Automate
 
 Evolve
 
-Explain that Hey5050 is designed as an ecosystem where people can connect their digital tools, create content, automate workflows, and progressively adopt future technologies.
+Explain that Griya Pustaka Mandiri is designed as an ecosystem where people can connect their digital tools, create content, automate workflows, and progressively adopt future technologies.
 
 Do not implement the functionality yet.
 
@@ -396,7 +396,7 @@ This is only the visual UX representation.
 
 ==================================================
 
-Create a section showing that Hey5050 can connect with external platforms.
+Create a section showing that Griya Pustaka Mandiri can connect with external platforms.
 
 TikTok can appear here as one integration.
 
@@ -416,7 +416,7 @@ Creative Tools
 
 Automation Systems
 
-TikTok should appear as an integration capability rather than the identity of Hey5050.
+TikTok should appear as an integration capability rather than the identity of Griya Pustaka Mandiri.
 
 ==================================================
 
@@ -440,13 +440,13 @@ clean login panel.
 
 Example:
 
-WELCOME TO HEY5050
+WELCOME TO GRIYA PUSTAKA MANDIRI
 
 "Enter the next generation."
 
 Login form.
 
-After authentication, users will eventually enter the Hey5050 Dashboard.
+After authentication, users will eventually enter the Griya Pustaka Mandiri Dashboard.
 
 Do not implement real authentication yet.
 
@@ -484,7 +484,7 @@ Settings
 
 Top bar:
 
-HEY5050
+GRIYA PUSTAKA MANDIRI
 
 System status
 
@@ -686,7 +686,7 @@ Every section must have a clear purpose.
 
 ==================================================
 
-Hey5050 must NOT look like:
+Griya Pustaka Mandiri must NOT look like:
 
 - a TikTok clone
 
@@ -702,7 +702,7 @@ Hey5050 must NOT look like:
 
 - a generic SaaS template
 
-Hey5050 should look like:
+Griya Pustaka Mandiri should look like:
 
 "A serious technology platform from the future."
 
@@ -760,7 +760,7 @@ Do NOT implement:
 
 - environment variables
 
-The objective is to make the Hey5050 visual foundation feel production-grade before any backend functionality is connected.
+The objective is to make the Griya Pustaka Mandiri visual foundation feel production-grade before any backend functionality is connected.
 
 Before modifying existing files, inspect the repository structure and preserve any existing project configuration that is still useful.
 
