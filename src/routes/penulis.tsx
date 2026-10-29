@@ -14,7 +14,7 @@ export const Route = createFileRoute("/penulis")({
 function Authors() {
   const result = Route.useLoaderData();
   const authors = result.success ? result.authors : [];
-  const duplicated = authors.length > 1 ? [...authors, ...authors] : authors;
+  const duplicated = authors.length ? [...authors, ...authors, ...authors, ...authors] : [];
   return <SiteLayout>
     <PageHero eyebrow="Komunitas Penulis" title="Penulis dan gagasan mereka" description="Mengenal individu dengan keahlian, pengalaman, dan komitmen untuk memperluas literasi." />
     <section className="section overflow-hidden">
@@ -25,7 +25,7 @@ function Authors() {
         </div>
         {authors.length > 0 ? <>
           <div className="author-marquee relative" aria-label="Galeri profil penulis bergerak">
-            <div className={authors.length > 1 ? "author-marquee-track author-marquee-moving" : "author-marquee-track"}>
+            <div className={authors.length ? "author-marquee-track author-marquee-moving" : "author-marquee-track"}>
               {duplicated.map((author, index) => <article key={author.id + "-" + index} className="author-marquee-card">
                 <div className="author-avatar-wrap"><img src={author.photo_data} alt={`Foto ${author.name}`} className="author-avatar" loading={index > 3 ? "lazy" : "eager"} /></div>
                 <h3 className="mt-5 text-lg font-semibold leading-tight">{author.name}</h3>
@@ -58,7 +58,7 @@ function Authors() {
       .author-marquee-card{box-sizing:border-box;flex:0 0 260px;min-height:390px;padding:1.25rem;border:1px solid hsl(var(--border));border-radius:1.15rem;background:linear-gradient(160deg,hsl(var(--card)),hsl(var(--background)));box-shadow:0 10px 30px #00000012}
       .author-avatar-wrap{display:flex;justify-content:center;padding-top:.25rem}
       .author-avatar{width:112px;height:112px;object-fit:cover;border-radius:9999px;border:2px solid hsl(var(--primary));background:hsl(var(--muted));box-shadow:0 0 0 5px hsl(var(--primary)/.08)}
-      @keyframes author-marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      @keyframes author-marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-25%)}}
       @media(prefers-reduced-motion:reduce){.author-marquee-moving{animation:none!important;transform:none!important}.author-marquee-track{flex-wrap:wrap;width:100%;justify-content:center}}
     `}</style>
   </SiteLayout>;
