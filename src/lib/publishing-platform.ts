@@ -416,7 +416,7 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
     const allowedOrder = ["pending_payment","processing","shipped","completed","cancelled","refunded"];
     const allowedPayment = ["gateway_not_configured","pending","paid","failed","refunded"];
     if (!allowedOrder.includes(data.orderStatus) || !allowedPayment.includes(data.paymentStatus)) return { success: false as const, error: "Status pesanan atau pembayaran tidak valid." };
-    if (data.paymentStatus === "paid" && !adminSession.authenticated && !user?.roles.some((role) => role === "admin" || role === "finance")) return { success: false as const, error: "Hanya admin atau keuangan yang dapat memverifikasi pembayaran." };
+    if (data.paymentStatus === "paid") return { success: false as const, error: "Pembayaran online belum terintegrasi. Status lunas harus berasal dari callback payment gateway yang tervalidasi." };
     const sql = await ensurePlatformTables();
     const existing = await sql`SELECT order_status,stock_released FROM gpm_orders WHERE id=${data.orderId} LIMIT 1`;
     if (!existing.length) return { success: false as const, error: "Pesanan tidak ditemukan." };
