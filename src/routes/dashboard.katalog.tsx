@@ -15,7 +15,7 @@ export const Route = createFileRoute("/dashboard/katalog")({
 
 type BookForm = Omit<CatalogBook, "id" | "createdAt">;
 const emptyForm: BookForm = {
-  title: "", author: "", category: "Sosial", synopsis: "", isbn: "",
+  title: "", author: "", authors: [{ name: "", doi: "" }], category: "Sosial", synopsis: "", isbn: "", qrcbn: "",
   status: "upcoming", coverUrl: "", backCoverUrl: "", price: "", format: "Cetak", orderInfo: "",
 };
 
@@ -102,7 +102,8 @@ function CatalogAdmin() {
   }
   function editBook(book: CatalogBook) {
     const { id, createdAt, ...fields } = book;
-    setForm(fields);
+    const savedAuthors = Array.isArray(fields.authors) && fields.authors.length ? fields.authors : [{ name: fields.author || "", doi: "" }];
+    setForm({ ...fields, authors: savedAuthors, author: savedAuthors.map((item) => item.name.trim()).filter(Boolean).join(", "), qrcbn: fields.qrcbn ?? "" });
     setEditingId(id);
     setNotice("");
     setError("");
@@ -158,9 +159,42 @@ function CatalogAdmin() {
         </div>
         <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
           <Field label="Judul buku *"><input required value={form.title} onChange={(e) => change("title", e.target.value)} placeholder="Contoh: Urban Social Work" /></Field>
-          <Field label="Nama penulis *"><input required value={form.author} onChange={(e) => change("author", e.target.value)} placeholder="Nama penulis" /></Field>
+          <div className="md:col-span-2">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <label className="block text-sm font-medium">Penulis dan DOI masing-masing *</label>
+              <Button type="button" variant="glass" size="sm" onClick={() => change("authors", [...form.authors, { name: "", doi: "" }])}><Plus className="size-4" /> Tambah Penulis</Button>
+            </div>
+            <div className="space-y-3">
+              {form.authors.map((person, index) => (
+                <div key={index} className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                  <div>
+                    <label className="mb-1.5 block text-xs text-muted-foreground">Nama penulis {index + 1}</label>
+                    <input required={index === 0} value={person.name} onChange={(e) => {
+                      const authors = form.authors.map((item, i) => i === index ? { ...item, name: e.target.value } : item);
+                      setForm((current) => ({ ...current, authors, author: authors.map((item) => item.name.trim()).filter(Boolean).join(", ") }));
+                    }} placeholder="Nama lengkap penulis" className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm outline-none focus:border-primary/60" />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs text-muted-foreground">DOI penulis (opsional)</label>
+                    <input value={person.doi} onChange={(e) => {
+                      const authors = form.authors.map((item, i) => i === index ? { ...item, doi: e.target.value } : item);
+                      change("authors", authors);
+                    }} placeholder="Contoh: 10.xxxx/xxxxx" className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm outline-none focus:border-primary/60" />
+                  </div>
+                  <div className="flex items-end">
+                    <Button type="button" variant="glass" size="sm" disabled={form.authors.length === 1} onClick={() => {
+                      const authors = form.authors.filter((_, i) => i !== index);
+                      setForm((current) => ({ ...current, authors, author: authors.map((item) => item.name.trim()).filter(Boolean).join(", ") }));
+                    }}>Hapus</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">Tambahkan satu baris untuk setiap penulis. DOI boleh dikosongkan jika penulis belum memilikinya. DOI adalah pengenal publikasi/objek digital, jadi tidak semua penulis pasti memiliki DOI pribadi.</p>
+          </div>
           <Field label="Kategori"><input value={form.category} onChange={(e) => change("category", e.target.value)} placeholder="Sosial, Pendidikan, Agama..." /></Field>
-          <Field label="ISBN / QRCBN"><input value={form.isbn} onChange={(e) => change("isbn", e.target.value)} placeholder="Kosongkan bila belum tersedia" /></Field>
+          <Field label="ISBN"><input value={form.isbn} onChange={(e) => change("isbn", e.target.value)} placeholder="Nomor ISBN (jika tersedia)" /></Field>
+          <Field label="QRCBN"><input value={form.qrcbn} onChange={(e) => change("qrcbn", e.target.value)} placeholder="Nomor QRCBN (jika tersedia)" /></Field>
           <Field label="Status penerbitan"><select value={form.status} onChange={(e) => change("status", e.target.value as BookForm["status"])}><option value="upcoming">Segera Terbit</option><option value="published">Telah Terbit</option></select></Field>
           <Field label="Format buku"><select value={form.format} onChange={(e) => change("format", e.target.value)}><option>Cetak</option><option>E-book</option><option>Cetak dan E-book</option></select></Field>
           <Field label="Harga (opsional)"><input value={form.price} onChange={(e) => change("price", e.target.value)} placeholder="Contoh: Rp75.000 atau Hubungi penerbit" /></Field>
@@ -237,7 +271,7 @@ function CatalogAdmin() {
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-border px-2.5 py-1 text-xs">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</span><span className="text-xs text-muted-foreground">{book.category}</span></div>
               <h3 className="mt-2 font-semibold">{book.title}</h3><p className="mt-1 text-sm text-muted-foreground">{book.author}</p>
-              <p className="mt-1 text-xs text-muted-foreground">ISBN: {book.isbn || "Belum tersedia"} · {book.format}</p>
+              <p className="mt-1 text-xs text-muted-foreground">ISBN: {book.isbn || "Belum tersedia"} · QRCBN: {book.qrcbn || "Belum tersedia"} · {book.format}</p>
             </div>
             <div className="flex shrink-0 gap-2"><Button variant="glass" size="sm" onClick={() => editBook(book)}><Pencil className="size-4" /> Edit</Button><Button variant="glass" size="sm" onClick={() => void deleteBook(book)}><Trash2 className="size-4" /> Hapus</Button></div>
           </Panel>)}
