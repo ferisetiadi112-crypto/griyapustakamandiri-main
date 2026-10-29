@@ -93,10 +93,10 @@ export const getAdminCatalogBooks = createServerFn({ method: "GET" as const }).h
     return { success: false as const, books: [] as CatalogBook[], error: "Silakan masuk sebagai admin untuk melihat data katalog." };
   }
   try {
-    const sql = await ensureTable();
+    const sql = await ensureCatalogTable();
     // Admin needs the original cover data to preview/edit existing uploads.
     // Public catalog uses getCatalogBooks(), which includes covers for public display.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getAdminCatalogBooks failed", error);
