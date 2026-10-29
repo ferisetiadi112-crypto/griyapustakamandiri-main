@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookMarked, BookOpen, BookText, Search, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowRight, BookOpen, Search, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { getCatalogBooks } from "@/lib/catalog-books";
@@ -134,29 +134,6 @@ function Katalog() {
       />
       <section className="section">
         <div className="shell">
-          <Panel className="relative overflow-hidden p-6 md:p-8">
-            <div aria-hidden className="absolute inset-0 atmosphere opacity-40" />
-            <div className="relative">
-              <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <HudLabel>Temukan Buku</HudLabel>
-                  <h2 className="mt-2 text-2xl font-semibold">Cari berdasarkan topik</h2>
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">Gunakan pencarian atau pilih kategori untuk menyaring bidang katalog.</p>
-                </div>
-                <div className="relative w-full md:max-w-sm">
-                  <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari kategori atau topik..." aria-label="Cari kategori atau topik buku" className="h-11 w-full rounded-xl border border-border bg-background/70 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/60" />
-                </div>
-              </div>
-              <div className="mt-7 flex flex-wrap items-center gap-2" aria-label="Filter status buku">
-                <span className="mr-1 inline-flex items-center gap-2 text-xs text-muted-foreground"><SlidersHorizontal className="size-3.5" /> Status:</span>
-                {STATUS_FILTERS.map((item) => (
-                  <button key={item} type="button" onClick={() => setStatus(item)} aria-pressed={status === item} className={`rounded-full border px-3.5 py-2 text-xs transition-colors ${status === item ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>{item}</button>
-                ))}
-              </div>
-            </div>
-          </Panel>
-
           <div className="mt-12 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
             <aside className="self-start lg:sticky lg:top-28" aria-label="Navigasi kategori buku">
               <Panel className="overflow-hidden p-0">
