@@ -29,6 +29,65 @@ function CatalogAdmin() {
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
+  const [coverNotice, setCoverNotice] = useState("");
+
+  async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setCoverNotice("");
+    setError("");
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setError("Format sampul harus JPG, PNG, atau WebP.");
+      event.target.value = "";
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      setError("Ukuran file melebihi 3 MB. Silakan kompres gambar atau pilih file yang lebih kecil.");
+      event.target.value = "";
+      return;
+    }
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("File tidak dapat dibaca."));
+        reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("File tidak valid."));
+        reader.readAsDataURL(file);
+      });
+      const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("File gambar tidak dapat dibuka."));
+        img.src = dataUrl;
+      });
+      const ratio = image.width / image.height;
+      const a4Ratio = 210 / 297;
+      if (image.height <= image.width || Math.abs(ratio - a4Ratio) / a4Ratio > 0.06) {
+        throw new Error("Gunakan sampul portrait dengan proporsi A4 (210 × 297 mm), bukan landscape atau persegi.");
+      }
+      const maxHeight = 1754;
+      const scale = Math.min(1, maxHeight / image.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Gambar tidak dapat diproses pada browser ini.");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      let quality = 0.86;
+      let optimized = canvas.toDataURL("image/jpeg", quality);
+      while (optimized.length > 2_400_000 && quality > 0.5) {
+        quality -= 0.08;
+        optimized = canvas.toDataURL("image/jpeg", quality);
+      }
+      if (optimized.length > 2_900_000) throw new Error("Gambar masih terlalu besar setelah dioptimalkan. Pilih gambar yang lebih sederhana atau lebih kecil.");
+      change("coverUrl", optimized);
+      setCoverNotice("Sampul siap digunakan. Gambar telah dioptimalkan otomatis.");
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Sampul gagal diproses.");
+      event.target.value = "";
+    }
+  }
 
   function change<K extends keyof BookForm>(key: K, value: BookForm[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -37,6 +96,7 @@ function CatalogAdmin() {
     setForm(emptyForm);
     setEditingId(undefined);
     setError("");
+    setCoverNotice("");
   }
   function editBook(book: CatalogBook) {
     const { id, createdAt, ...fields } = book;
@@ -44,6 +104,7 @@ function CatalogAdmin() {
     setEditingId(id);
     setNotice("");
     setError("");
+    setCoverNotice("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -101,7 +162,26 @@ function CatalogAdmin() {
           <Field label="Status penerbitan"><select value={form.status} onChange={(e) => change("status", e.target.value as BookForm["status"])}><option value="upcoming">Segera Terbit</option><option value="published">Telah Terbit</option></select></Field>
           <Field label="Format buku"><select value={form.format} onChange={(e) => change("format", e.target.value)}><option>Cetak</option><option>E-book</option><option>Cetak dan E-book</option></select></Field>
           <Field label="Harga (opsional)"><input value={form.price} onChange={(e) => change("price", e.target.value)} placeholder="Contoh: Rp75.000 atau Hubungi penerbit" /></Field>
-          <Field label="URL gambar sampul"><input type="url" value={form.coverUrl} onChange={(e) => change("coverUrl", e.target.value)} placeholder="https://.../sampul-buku.jpg" /></Field>
+          <div className="md:col-span-2">
+            <label htmlFor="cover-upload" className="mb-2 block text-sm font-medium">Unggah sampul buku (A4 portrait)</label>
+            <input
+              id="cover-upload"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => void handleCoverUpload(event)}
+              className="block w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium"
+            />
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Format JPG, PNG, atau WebP. Maksimal 3 MB sebelum diproses. Sampul harus tegak (portrait) dengan rasio A4 210 × 297 mm; ukuran desain yang disarankan 1240 × 1754 px. Gambar akan dioptimalkan otomatis agar lebih ringan.</p>
+            {form.coverUrl && <div className="mt-3 flex items-start gap-4 rounded-xl border border-border p-3">
+              <img src={form.coverUrl} alt="Pratinjau sampul buku" className="h-40 w-auto max-w-28 rounded-md border border-border object-contain" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">Pratinjau sampul aktif</p>
+                <p className="mt-1 text-xs text-muted-foreground">Sampul ini akan ditampilkan pada katalog publik.</p>
+                <Button type="button" variant="glass" size="sm" className="mt-3" onClick={() => change("coverUrl", "")}>Hapus sampul</Button>
+              </div>
+            </div>}
+            {coverNotice && <p role="status" className="mt-2 text-sm text-muted-foreground">{coverNotice}</p>}
+          </div>
           <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium">Sinopsis / deskripsi buku</label>
             <textarea rows={5} value={form.synopsis} onChange={(e) => change("synopsis", e.target.value)} placeholder="Tuliskan ringkasan buku untuk calon pembaca..." className="w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm outline-none focus:border-primary/60" />
