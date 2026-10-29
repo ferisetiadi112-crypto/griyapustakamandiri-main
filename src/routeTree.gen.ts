@@ -160,6 +160,8 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute

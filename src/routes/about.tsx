@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Compass, HeartHandshake, ShieldCheck, Telescope } from "lucide-react";
+import { BookOpen, HeartHandshake, ShieldCheck, Sparkles } from "lucide-react";
 
 import { PageHero, SiteLayout } from "@/components/hey/SiteLayout";
 import { FeatureCard } from "@/components/hey/FeatureCard";
@@ -8,16 +8,15 @@ import { Panel, SectionHeading, HudLabel } from "@/components/hey/primitives";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Griya Pustaka Mandiri — Technology from the future" },
+      { title: "Tentang Griya Pustaka Mandiri — Penerbitan Buku" },
       {
         name: "description",
-        content:
-          "Griya Pustaka Mandiri is a technology platform exploring how humans and intelligent systems work together — designed for the future, built for humans today.",
+        content: "Kenali Griya Pustaka Mandiri, layanan penerbitan buku yang mendampingi penulis dari persiapan naskah hingga proses terbit.",
       },
-      { property: "og:title", content: "About Griya Pustaka Mandiri" },
+      { property: "og:title", content: "Tentang Griya Pustaka Mandiri" },
       {
         property: "og:description",
-        content: "The philosophy and principles behind the Griya Pustaka Mandiri technology platform.",
+        content: "Mendampingi penulis menyiapkan gagasan menjadi buku.",
       },
     ],
   }),
@@ -26,24 +25,24 @@ export const Route = createFileRoute("/about")({
 
 const VALUES = [
   {
-    icon: Telescope,
-    title: "Long Horizon",
-    description: "We design for decades, not quarters. Every decision assumes a longer timeline.",
+    icon: BookOpen,
+    title: "Menghargai Gagasan",
+    description: "Setiap naskah diperlakukan sebagai karya yang memiliki tujuan, pembaca, dan karakter tersendiri.",
   },
   {
     icon: HeartHandshake,
-    title: "Human First",
-    description: "Intelligent systems should extend human judgement, never quietly replace it.",
+    title: "Kolaborasi dengan Penulis",
+    description: "Ruang lingkup layanan, revisi, biaya, dan hasil akhir dibicarakan bersama sebelum pengerjaan.",
   },
   {
     icon: ShieldCheck,
-    title: "Trustworthy Systems",
-    description: "Transparency, predictability and control are treated as product features.",
+    title: "Proses yang Transparan",
+    description: "Kami mendorong kejelasan mengenai persyaratan, hak cipta, ISBN, spesifikasi cetak, dan jadwal.",
   },
   {
-    icon: Compass,
-    title: "Clarity Over Spectacle",
-    description: "The future should be understandable. Clarity outranks decoration everywhere.",
+    icon: Sparkles,
+    title: "Kualitas dan Keterbacaan",
+    description: "Desain sampul dan tata letak diarahkan untuk membantu buku tampil rapi serta nyaman dibaca.",
   },
 ];
 
@@ -51,32 +50,31 @@ function About() {
   return (
     <SiteLayout>
       <PageHero
-        eyebrow="About · Station Log"
-        title="A platform built at the meeting point of humans and future technology"
-        description="The name Griya Pustaka Mandiri is a greeting sent forward in time — a conversation between the people building today and the technology arriving tomorrow."
+        eyebrow="Tentang Kami"
+        title="Mendampingi gagasan menjadi karya yang dapat dibaca"
+        description="Griya Pustaka Mandiri hadir sebagai mitra penerbitan bagi penulis yang ingin menyiapkan naskah menjadi buku, dengan proses yang jelas dan layanan yang disesuaikan dengan kebutuhan karya."
       />
-
       <section className="section">
         <div className="shell grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
           <div className="flex flex-col gap-6">
             <SectionHeading
-              eyebrow="Mission"
-              title="Technology from the future, designed for humans today"
-              description="Griya Pustaka Mandiri is building the foundation for future digital creation, intelligent automation and connected technology. We work on the parts of that future that can be made usable now, and shape the platform so tomorrow's capabilities can dock into it without redesign."
+              eyebrow="Komitmen"
+              title="Penerbitan yang dimulai dari komunikasi"
+              description="Setiap naskah memiliki kebutuhan yang berbeda. Karena itu, kami mengutamakan peninjauan awal, penjelasan cakupan layanan, kesepakatan biaya, serta persetujuan penulis pada tahapan penting."
             />
             <p className="text-sm leading-relaxed text-muted-foreground">
-              The platform is deliberately not defined by any single network or service. Individual
-              integrations come and go; the operating environment around them is the product.
+              Layanan dapat mencakup penataan naskah, desain sampul, penyediaan berkas digital, pendampingan pengajuan ISBN, dan produksi cetak sesuai paket yang disepakati. Fasilitas akhir akan dinyatakan secara tertulis sebelum pekerjaan dimulai.
             </p>
           </div>
           <Panel className="flex flex-col gap-6">
-            <HudLabel>Station Manifest</HudLabel>
+            <HudLabel>Profil Layanan</HudLabel>
             <dl className="grid gap-5">
               {[
-                ["Designation", "Griya Pustaka Mandiri Orbital Platform"],
-                ["Focus", "Intelligent systems · Automation · Creation"],
-                ["Posture", "Platform-oriented, integration-agnostic"],
-                ["Phase", "Foundation — visual architecture"],
+                ["Nama", "Griya Pustaka Mandiri"],
+                ["Bidang", "Penerbitan dan persiapan buku"],
+                ["Jenis karya", "Karya akademik dan naskah umum"],
+                ["Format", "Buku cetak dan digital sesuai layanan"],
+                ["Prinsip", "Kejelasan proses dan persetujuan penulis"],
               ].map(([k, v]) => (
                 <div key={k} className="border-b border-border pb-4 last:border-0 last:pb-0">
                   <dt className="hud-label">{k}</dt>
@@ -87,14 +85,11 @@ function About() {
           </Panel>
         </div>
       </section>
-
       <section className="section pt-0">
         <div className="shell">
-          <SectionHeading eyebrow="Principles" title="How we build" />
+          <SectionHeading eyebrow="Nilai Kami" title="Prinsip dalam setiap proses penerbitan" />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {VALUES.map((value) => (
-              <FeatureCard key={value.title} {...value} />
-            ))}
+            {VALUES.map((value) => <FeatureCard key={value.title} {...value} />)}
           </div>
         </div>
       </section>
