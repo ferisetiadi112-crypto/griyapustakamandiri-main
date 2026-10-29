@@ -21,13 +21,13 @@ import vision from "@/assets/vision-5050.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hey5050 — The Future Starts Here" },
+      { title: "Griya Pustaka Mandiri — The Future Starts Here" },
       {
         name: "description",
         content:
-          "Hey5050 explores the next generation of intelligent technology, automation and digital creation — a platform built for the world beyond today.",
+          "Griya Pustaka Mandiri explores the next generation of intelligent technology, automation and digital creation — a platform built for the world beyond today.",
       },
-      { property: "og:title", content: "Hey5050 — The Future Starts Here" },
+      { property: "og:title", content: "Griya Pustaka Mandiri — The Future Starts Here" },
       {
         property: "og:description",
         content:
@@ -147,7 +147,7 @@ function Home() {
           <div className="mx-auto flex max-w-3xl animate-rise flex-col items-center text-center">
             <HudChip tone="active">Orbital Station · Year 5050</HudChip>
             <h1 className="mt-8 text-balance font-display text-5xl font-bold leading-[0.95] sm:text-6xl md:text-7xl lg:text-8xl">
-              <span className="block tracking-tight text-gradient">HEY5050</span>
+              <span className="block tracking-tight text-gradient text-4xl sm:text-5xl md:text-6xl lg:text-7xl">GRIYA PUSTAKA<br />MANDIRI</span>
               <span className="mt-4 block text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
                 The Future Starts Here.
               </span>
@@ -185,7 +185,7 @@ function Home() {
           <SectionHeading
             eyebrow="Philosophy"
             title="Built for the World Beyond Today"
-            description="Hey5050 studies how technology, automation, artificial intelligence and digital creativity can evolve together — and turns that research into a platform people can actually use now."
+            description="Griya Pustaka Mandiri studies how technology, automation, artificial intelligence and digital creativity can evolve together — and turns that research into a platform people can actually use now."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {PILLARS.map((pillar) => (
@@ -237,7 +237,7 @@ function Home() {
           <SectionHeading
             eyebrow="Operating Model"
             title="Four movements, one ecosystem"
-            description="Hey5050 is designed as an ecosystem where people connect their digital tools, create content, automate workflows and progressively adopt future technologies."
+            description="Griya Pustaka Mandiri is designed as an ecosystem where people connect their digital tools, create content, automate workflows and progressively adopt future technologies."
           />
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((step) => (
@@ -253,7 +253,7 @@ function Home() {
           <SectionHeading
             eyebrow="Integrations"
             title="Connected to the Digital World"
-            description="The platform is built to speak to the systems around it. Every integration is a capability — never the identity of Hey5050."
+            description="The platform is built to speak to the systems around it. Every integration is a capability — never the identity of Griya Pustaka Mandiri."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {INTEGRATIONS.map((item) => (
@@ -281,7 +281,7 @@ function Home() {
                 Step into the next generation
               </h2>
               <p className="mt-4 text-pretty text-muted-foreground">
-                Create an account and explore the Hey5050 command console.
+                Create an account and explore the Griya Pustaka Mandiri command console.
               </p>
               <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                 <Button asChild variant="hero" size="lg">

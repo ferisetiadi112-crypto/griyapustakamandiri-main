@@ -54,7 +54,7 @@ export function Footer() {
         ))}
       </div>
       <div className="shell flex flex-col gap-2 border-t border-border py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>© {new Date().getFullYear()} Hey5050. Orbital Systems Division.</p>
+        <p>© {new Date().getFullYear()} Griya Pustaka Mandiri. Orbital Systems Division.</p>
         <p className="font-mono tracking-widest uppercase">Sector 5050 · Build 0.1</p>
       </div>
     </footer>

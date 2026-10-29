@@ -8,8 +8,9 @@ export function Logo({ className }: { className?: string }) {
         <span className="absolute inset-1.5 rounded-full border border-border-strong" />
         <span className="size-1.5 rounded-full bg-primary" />
       </span>
-      <span className="truncate font-display text-lg font-bold tracking-tight">
-        HEY<span className="text-primary">5050</span>
+      <span className="flex min-w-0 flex-col font-display text-sm font-bold leading-tight tracking-tight">
+        <span className="whitespace-nowrap">Griya Pustaka</span>
+        <span className="whitespace-nowrap text-primary">Mandiri</span>
       </span>
     </span>
   );

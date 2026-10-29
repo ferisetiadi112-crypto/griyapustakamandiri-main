@@ -77,14 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Hey5050 — Orbital Technology Platform" },
+      { title: "Griya Pustaka Mandiri — Orbital Technology Platform" },
       {
         name: "description",
         content:
           "A futuristic technology platform exploring intelligent automation, digital creation and connected systems — designed for the world beyond today.",
       },
-      { name: "author", content: "Hey5050 Orbital Systems Division" },
-      { property: "og:title", content: "Hey5050 — Orbital Technology Platform" },
+      { name: "author", content: "Griya Pustaka Mandiri Orbital Systems Division" },
+      { property: "og:title", content: "Griya Pustaka Mandiri — Orbital Technology Platform" },
       {
         property: "og:description",
         content:
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Hey5050 — Orbital Technology Platform" },
+      { name: "twitter:title", content: "Griya Pustaka Mandiri — Orbital Technology Platform" },
     ],
     links: [
       {
