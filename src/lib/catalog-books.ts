@@ -6,6 +6,7 @@ export type CatalogBook = {
   id: number;
   title: string;
   author: string;
+  authors: { name: string; doi: string }[];
   category: string;
   synopsis: string;
   isbn: string;
@@ -30,6 +31,7 @@ async function ensureTable() {
     id BIGSERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     author TEXT NOT NULL,
+    authors TEXT NOT NULL DEFAULT '[]',
     category TEXT NOT NULL DEFAULT 'Umum',
     synopsis TEXT NOT NULL DEFAULT '',
     isbn TEXT NOT NULL DEFAULT '',
@@ -42,6 +44,8 @@ async function ensureTable() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS back_cover_url TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS authors TEXT NOT NULL DEFAULT '[]'`;
+  await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS qrcbn TEXT NOT NULL DEFAULT ''`;
   return sql;
 }
 
@@ -50,6 +54,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
     id: Number(row.id),
     title: String(row.title ?? ""),
     author: String(row.author ?? ""),
+    authors: (() => { try { const parsed = JSON.parse(String(row.authors ?? "[]")); return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.name === "string").map((item) => ({ name: String(item.name), doi: String(item.doi ?? "") })) : []; } catch { return []; } })(),
     category: String(row.category ?? "Umum"),
     synopsis: String(row.synopsis ?? ""),
     isbn: String(row.isbn ?? ""),
@@ -102,7 +107,7 @@ export const saveCatalogBook = createServerFn({ method: "POST" as const })
     try {
       const sql = await ensureTable();
       if (data.id) {
-        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
+        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, authors=${JSON.stringify(data.authors ?? [])}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
       } else {
         await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, status, cover_url, back_cover_url, price, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.status}, ${data.coverUrl.trim()}, ${data.backCoverUrl.trim()}, ${data.price.trim()}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
       }
