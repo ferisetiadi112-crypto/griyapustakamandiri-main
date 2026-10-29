@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788060191417,
+      "tag": "0000_cuddly_nekra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788200000000,
+      "tag": "0001_add_youtube_account",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788087199106,
+      "tag": "0002_freezing_arachne",
+      "breakpoints": true
+    }
+  ]
+}
