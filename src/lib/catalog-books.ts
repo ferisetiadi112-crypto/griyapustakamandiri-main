@@ -62,7 +62,9 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
 export const getCatalogBooks = createServerFn({ method: "GET" as const }).handler(async () => {
   try {
     const sql = await ensureTable();
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, CASE WHEN cover_url LIKE 'data:%' THEN '' ELSE cover_url END AS cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    // Include saved cover data so the public catalog can render uploaded covers.
+    // Uploaded covers are resized/compressed in the admin form before being saved.
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getCatalogBooks failed", error);
@@ -78,7 +80,7 @@ export const getAdminCatalogBooks = createServerFn({ method: "GET" as const }).h
   try {
     const sql = await ensureTable();
     // Admin needs the original cover data to preview/edit existing uploads.
-    // Public catalog uses getCatalogBooks(), which omits inline Base64 images to keep responses lightweight.
+    // Public catalog uses getCatalogBooks(), which includes covers for public display.
     const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
