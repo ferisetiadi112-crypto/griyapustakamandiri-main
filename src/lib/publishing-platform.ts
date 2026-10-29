@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie, deleteCookie } from "@tanstack/react-start/server";
 import { neon } from "@neondatabase/serverless";
+import { ensureCatalogTable } from "@/lib/catalog-books";
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
 const SESSION_COOKIE = "gpm_user_session";
@@ -357,6 +358,7 @@ export const createCheckoutOrder = createServerFn({ method: "POST" as const })
     if (!data.customerName.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) return { success: false as const, error: "Nama dan email pembeli wajib valid." };
     if (!data.address.trim() || !data.city.trim()) return { success: false as const, error: "Alamat dan kota pengiriman wajib diisi." };
     if (!Array.isArray(data.items) || data.items.length < 1 || data.items.length > 20) return { success: false as const, error: "Keranjang kosong atau terlalu banyak jenis buku." };
+    await ensureCatalogTable();
     const sql = await ensurePlatformTables();
     const orderItems: { bookId: number; title: string; format: string; unitPrice: number; quantity: number; lineTotal: number }[] = [];
     for (const item of data.items) {
