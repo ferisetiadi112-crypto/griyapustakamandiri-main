@@ -53,6 +53,43 @@ export const updateContractForAdmin = createServerFn({ method: "POST" as const }
     return { success: true as const };
   });
 
+export const getMyContracts = createServerFn({ method: "GET" as const }).handler(async () => {
+  const session = await getUserSession();
+  const user = session.user;
+  if (!user || !user.roles.includes("author")) throw new Error("Akun penulis diperlukan.");
+  const sql = await ensurePlatformTables();
+  const contracts = await sql`SELECT c.id,c.contract_reference,c.royalty_percent,c.net_revenue_definition,c.terms_summary,c.status,c.document_filename,c.signed_at,c.created_at,s.title AS manuscript_title FROM gpm_publishing_contracts c JOIN gpm_author_submissions s ON s.id=c.submission_id WHERE c.user_id=${user.id} ORDER BY c.created_at DESC`;
+  return { success: true as const, contracts };
+});
+
+export const downloadMyContract = createServerFn({ method: "POST" as const })
+  .validator((input: { contractId: number }) => input)
+  .handler(async ({ data }) => {
+    const session = await getUserSession();
+    const user = session.user;
+    if (!user || !user.roles.includes("author")) return { success: false as const, error: "Akun penulis diperlukan." };
+    const sql = await ensurePlatformTables();
+    const rows = await sql`SELECT contract_reference,document_filename,document_data FROM gpm_publishing_contracts WHERE id=${data.contractId} AND user_id=${user.id} AND status IN ('proposed','author_signed','signed') LIMIT 1`;
+    if (!rows.length || !(rows[0] as { document_data: string }).document_data) return { success: false as const, error: "Dokumen kontrak belum tersedia." };
+    const row = rows[0] as { contract_reference: string; document_filename: string; document_data: string };
+    return { success: true as const, reference: row.contract_reference, filename: row.document_filename, fileData: row.document_data };
+  });
+
+export const submitSignedContract = createServerFn({ method: "POST" as const })
+  .validator((input: { contractId: number; filename: string; fileData: string }) => input)
+  .handler(async ({ data }) => {
+    const session = await getUserSession();
+    const user = session.user;
+    if (!user || !user.roles.includes("author")) return { success: false as const, error: "Akun penulis diperlukan." };
+    if (!user.emailVerified) return { success: false as const, error: "Verifikasi email diperlukan." };
+    if (!/^[^/\\\\]+\\.(pdf|doc|docx)$/i.test(data.filename) || data.fileData.length > 2_000_000 || !data.fileData.startsWith("data:")) return { success: false as const, error: "File harus PDF/DOC/DOCX dan maksimal 1,5 MB." };
+    const sql = await ensurePlatformTables();
+    const rows = await sql`SELECT id FROM gpm_publishing_contracts WHERE id=${data.contractId} AND user_id=${user.id} AND status=${"proposed"} LIMIT 1`;
+    if (!rows.length) return { success: false as const, error: "Kontrak tidak ditemukan atau belum ditawarkan." };
+    await sql`UPDATE gpm_publishing_contracts SET document_filename=${data.filename.slice(0,180)},document_data=${data.fileData},status=${"author_signed"},updated_at=NOW() WHERE id=${data.contractId} AND user_id=${user.id}`;
+    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user.id},${user.email},${"contract.author_signed"},${"contract"},${String(data.contractId)},${data.filename})`;
+    return { success: true as const };
+  });
 async function staffAllowed() {
   const admin = await getAdminSession();
   if (admin.authenticated) return { allowed: true, adminName: admin.username, user: null as null | { id: string; email: string; roles: string[] } };
