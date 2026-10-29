@@ -185,7 +185,7 @@ function Katalog() {
                           <div className="p-3">
                             <p className="text-[10px] font-medium uppercase tracking-wide text-primary">{book.category}</p>
                             <h3 className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-snug">{book.title}</h3>
-                            <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{book.author}</p>
+                            <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{book.authors?.length ? book.authors.map((person) => person.name).filter(Boolean).join(", ") : book.author}</p>
                             <p className="mt-2 text-xs text-muted-foreground">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
                             {book.price && <p className="mt-1 text-sm font-semibold">{book.price.toLowerCase().includes("rp") ? book.price : `Rp${book.price}`}</p>}
                             <button type="button" onClick={() => setSelectedBook(book)} className="mt-3 flex min-h-9 w-full items-center justify-center gap-1 rounded border border-border px-2 py-2 text-xs font-semibold transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary">Lihat Lebih Detail <ArrowRight className="size-3.5" /></button>
@@ -226,11 +226,13 @@ function Katalog() {
               <div className="pt-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selectedBook.category}</p>
                 <h2 id="book-detail-title" className="mt-2 pr-7 text-2xl font-bold">{selectedBook.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">Oleh {selectedBook.author}</p>
+                <p className="mt-2 text-sm text-muted-foreground">Oleh {selectedBook.authors?.length ? selectedBook.authors.map((person) => person.name).filter(Boolean).join(", ") : selectedBook.author}</p>
+                {selectedBook.authors?.some((person) => person.doi.trim()) && <div className="mt-3 space-y-1 text-xs text-muted-foreground">{selectedBook.authors.filter((person) => person.doi.trim()).map((person, index) => <p key={`${person.name}-${index}`}>DOI {person.name}: {person.doi}</p>)}</div>}
                 <p className="mt-3 text-sm">{selectedBook.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
                 {selectedBook.synopsis && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{selectedBook.synopsis.length > 350 ? `${selectedBook.synopsis.slice(0, 350).trimEnd()}…` : selectedBook.synopsis}</p>}
                 <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
                   <p><span className="text-muted-foreground">ISBN:</span> {selectedBook.isbn || "Dalam proses / belum tersedia"}</p>
+                  <p><span className="text-muted-foreground">QRCBN:</span> {selectedBook.qrcbn || "Belum tersedia"}</p>
                   <p><span className="text-muted-foreground">Format:</span> {selectedBook.format}</p>
                   {selectedBook.price && <p><span className="text-muted-foreground">Harga:</span> {selectedBook.price}</p>}
                 </div>
