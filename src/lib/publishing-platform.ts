@@ -106,12 +106,14 @@ export async function ensurePlatformTables() {
     payment_status TEXT NOT NULL DEFAULT 'gateway_not_configured',
     order_status TEXT NOT NULL DEFAULT 'pending_payment',
     stock_released BOOLEAN NOT NULL DEFAULT FALSE,
+    stock_reserved BOOLEAN NOT NULL DEFAULT FALSE,
     tracking_number TEXT NOT NULL DEFAULT '',
     admin_note TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
   await sql`ALTER TABLE gpm_orders ADD COLUMN IF NOT EXISTS stock_released BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE gpm_orders ADD COLUMN IF NOT EXISTS stock_reserved BOOLEAN NOT NULL DEFAULT FALSE`;
   await sql`CREATE TABLE IF NOT EXISTS gpm_order_items (
     id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL REFERENCES gpm_orders(id) ON DELETE CASCADE,
@@ -381,15 +383,18 @@ export const createCheckoutOrder = createServerFn({ method: "POST" as const })
     const created = await sql`INSERT INTO gpm_orders (order_number,user_id,customer_name,customer_email,customer_phone,shipping_address,shipping_city,shipping_postal_code,shipping_method,subtotal,total,payment_provider,payment_status,order_status) VALUES (${orderNumber},${user?.id ?? null},${data.customerName.trim()},${data.email.trim().toLowerCase()},${data.phone.trim()},${data.address.trim()},${data.city.trim()},${data.postalCode.trim()},${data.shippingMethod.trim()},${subtotal},${subtotal},${process.env["PAYMENT_GATEWAY_PROVIDER"] ?? ""},${paymentStatus},'pending_payment') RETURNING id`;
     const reservedItems: { bookId: number; quantity: number }[] = [];
     for (const item of orderItems) {
-      const reserved = await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity-${item.quantity} WHERE id=${item.bookId} AND stock_quantity >= ${item.quantity} RETURNING id`;
-      if (!reserved.length) {
-        for (const previous of reservedItems) await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity+${previous.quantity} WHERE id=${previous.bookId}`;
-        await sql`UPDATE gpm_orders SET order_status='cancelled',payment_status='failed',admin_note='Stok tidak mencukupi saat reservasi.' WHERE id=${created[0].id}`;
-        return { success: false as const, error: "Stok berubah saat checkout. Periksa keranjang dan coba kembali." };
+      if (paymentConfigured) {
+        const reserved = await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity-${item.quantity} WHERE id=${item.bookId} AND stock_quantity >= ${item.quantity} RETURNING id`;
+        if (!reserved.length) {
+          for (const previous of reservedItems) await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity+${previous.quantity} WHERE id=${previous.bookId}`;
+          await sql`UPDATE gpm_orders SET order_status='cancelled',payment_status='failed',admin_note='Stok tidak mencukupi saat reservasi.' WHERE id=${created[0].id}`;
+          return { success: false as const, error: "Stok berubah saat checkout. Periksa keranjang dan coba kembali." };
+        }
+        reservedItems.push({ bookId: item.bookId, quantity: item.quantity });
       }
-      reservedItems.push({ bookId: item.bookId, quantity: item.quantity });
       await sql`INSERT INTO gpm_order_items (order_id,book_id,title_snapshot,format_snapshot,unit_price,quantity,line_total) VALUES (${created[0].id},${item.bookId},${item.title},${item.format},${item.unitPrice},${item.quantity},${item.lineTotal})`;
     }
+    if (reservedItems.length) await sql`UPDATE gpm_orders SET stock_reserved=TRUE WHERE id=${created[0].id}`;
     await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user?.id ?? null},${data.email.trim().toLowerCase()},'order.created','order',${String(created[0].id)},${orderNumber})`;
     return { success: true as const, orderNumber, subtotal, total: subtotal, paymentConfigured, message: paymentConfigured ? "Pesanan tercatat. Gateway harus dikonfigurasi dan diuji sebelum pembayaran diaktifkan." : "Pesanan tercatat, tetapi pembayaran online belum aktif karena konfigurasi payment gateway belum tersedia." };
   });
@@ -423,10 +428,10 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
     if (!Number.isFinite(data.shippingCost) || data.shippingCost < 0 || data.shippingCost > 10000000) return { success: false as const, error: "Biaya pengiriman tidak valid." };
     if (data.paymentStatus === "paid") return { success: false as const, error: "Pembayaran online belum terintegrasi. Status lunas harus berasal dari callback payment gateway yang tervalidasi." };
     const sql = await ensurePlatformTables();
-    const existing = await sql`SELECT order_status,stock_released FROM gpm_orders WHERE id=${data.orderId} LIMIT 1`;
+    const existing = await sql`SELECT order_status,stock_released,stock_reserved FROM gpm_orders WHERE id=${data.orderId} LIMIT 1`;
     if (!existing.length) return { success: false as const, error: "Pesanan tidak ditemukan." };
-    const previous = existing[0] as { order_status: string; stock_released: boolean };
-    if (["cancelled","refunded"].includes(data.orderStatus) && !previous.stock_released) {
+    const previous = existing[0] as { order_status: string; stock_released: boolean; stock_reserved: boolean };
+    if (["cancelled","refunded"].includes(data.orderStatus) && previous.stock_reserved && !previous.stock_released) {
       const items = await sql`SELECT book_id,quantity FROM gpm_order_items WHERE order_id=${data.orderId}`;
       for (const item of items as { book_id: number; quantity: number }[]) await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity+${item.quantity} WHERE id=${item.book_id}`;
       await sql`UPDATE gpm_orders SET stock_released=TRUE WHERE id=${data.orderId}`;
