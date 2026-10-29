@@ -6,7 +6,7 @@ export const listContractsForAdmin = createServerFn({ method: "GET" as const }).
   const admin = await getAdminSession();
   if (!admin.authenticated) throw new Error("Akses admin diperlukan.");
   const sql = await ensurePlatformTables();
-  const contracts = await sql`SELECT c.id,c.submission_id,c.user_id,c.contract_reference,c.royalty_percent,c.net_revenue_definition,c.terms_summary,c.document_filename,c.status,c.signed_at,c.created_at,s.title AS book_title,s.reference_code,u.name AS author_name,u.email AS author_email FROM gpm_publishing_contracts c JOIN gpm_author_submissions s ON s.id=c.submission_id JOIN gpm_users u ON u.id=c.user_id ORDER BY c.created_at DESC`;
+  const contracts = await sql`SELECT c.id,c.submission_id,c.user_id,c.book_id,c.contract_reference,c.royalty_percent,c.net_revenue_definition,c.terms_summary,c.document_filename,c.status,c.signed_at,c.created_at,s.title AS book_title,s.reference_code,u.name AS author_name,u.email AS author_email FROM gpm_publishing_contracts c JOIN gpm_author_submissions s ON s.id=c.submission_id JOIN gpm_users u ON u.id=c.user_id ORDER BY c.created_at DESC`;
   const eligible = await sql`SELECT s.id,s.reference_code,s.title,s.user_id,u.name AS author_name FROM gpm_author_submissions s JOIN gpm_users u ON u.id=s.user_id WHERE s.status IN ('recommended_for_negotiation','contracted') AND NOT EXISTS (SELECT 1 FROM gpm_publishing_contracts c WHERE c.submission_id=s.id) ORDER BY s.updated_at DESC`;
   return { success: true as const, contracts, eligible };
 });
@@ -32,7 +32,7 @@ export const createContractForAdmin = createServerFn({ method: "POST" as const }
   });
 
 export const updateContractForAdmin = createServerFn({ method: "POST" as const })
-  .validator((input: { contractId: number; status: string; documentFilename: string; documentData: string }) => input)
+  .validator((input: { contractId: number; status: string; documentFilename: string; documentData: string; bookId?: number }) => input)
   .handler(async ({ data }) => {
     const admin = await getAdminSession();
     if (!admin.authenticated) return { success: false as const, error: "Akses admin diperlukan." };
