@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Search, SlidersHorizontal, X } from "lucide-react";
+import { ArrowRight, BookOpen, Search, ShoppingCart, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -186,7 +186,7 @@ function Katalog() {
                             <p className="text-[10px] font-medium uppercase tracking-wide text-primary">{book.category}</p>
                             <h3 className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-snug">{book.title}</h3>
                             <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{book.authors?.length ? book.authors.map((person) => person.name).filter(Boolean).join(", ") : book.author}</p>
-                            <p className="mt-2 text-xs text-muted-foreground">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
+                            <p className="mt-2 text-xs text-muted-foreground">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"} · Stok: {book.stockQuantity}</p>
                             {book.price && <p className="mt-1 text-sm font-semibold">{book.price.toLowerCase().includes("rp") ? book.price : `Rp${book.price}`}</p>}
                             <button type="button" onClick={() => setSelectedBook(book)} className="mt-3 flex min-h-9 w-full items-center justify-center gap-1 rounded border border-border px-2 py-2 text-xs font-semibold transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary">Lihat Lebih Detail <ArrowRight className="size-3.5" /></button>
                           </div>
@@ -239,7 +239,18 @@ function Katalog() {
                   {selectedBook.price && <p><span className="text-muted-foreground">Harga:</span> {selectedBook.price}</p>}
                 </div>
                 {selectedBook.orderInfo && <p className="mt-3 text-sm font-semibold text-primary">Info pemesanan: {selectedBook.orderInfo}</p>}
-                <Button asChild variant="glass" className="mt-5 w-full"><Link to="/contact">Hubungi Penerbit <ArrowRight /></Link></Button>
+                {selectedBook.status === "published" && selectedBook.stockQuantity > 0 && selectedBook.price && /[0-9]/.test(selectedBook.price) ? <Button className="mt-5 w-full" variant="hero" onClick={() => {
+                  let cart: { bookId: number; quantity: number }[] = [];
+                  try { const parsed = JSON.parse(localStorage.getItem("gpm_cart") ?? "[]"); if (Array.isArray(parsed)) cart = parsed; } catch { cart = []; }
+                  const existing = cart.find((item) => item.bookId === selectedBook.id);
+                  if (existing) existing.quantity = Math.min(selectedBook.stockQuantity, 20, existing.quantity + 1);
+                  else cart.push({ bookId: selectedBook.id, quantity: 1 });
+                  localStorage.setItem("gpm_cart", JSON.stringify(cart));
+                  window.dispatchEvent(new Event("gpm-cart-updated"));
+                  setSelectedBook(null);
+                  window.location.href = "/keranjang";
+                }}><ShoppingCart className="size-4"/>Tambah ke Keranjang</Button> : <p className="mt-5 rounded-lg bg-secondary/60 p-3 text-sm text-muted-foreground">{selectedBook.status !== "published" ? "Buku belum tersedia untuk dibeli." : selectedBook.stockQuantity < 1 ? "Stok belum tersedia." : "Harga buku belum ditetapkan."}</p>}
+                <Button asChild variant="glass" className="mt-3 w-full"><Link to="/contact">Hubungi Penerbit <ArrowRight /></Link></Button>
               </div>
             </div>
           </section>
