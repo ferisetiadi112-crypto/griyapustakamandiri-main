@@ -11,6 +11,7 @@ export type CatalogBook = {
   isbn: string;
   status: "published" | "upcoming";
   coverUrl: string;
+  backCoverUrl: string;
   price: string;
   format: string;
   orderInfo: string;
@@ -34,11 +35,13 @@ async function ensureTable() {
     isbn TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT 'upcoming' CHECK (status IN ('published','upcoming')),
     cover_url TEXT NOT NULL DEFAULT '',
+    back_cover_url TEXT NOT NULL DEFAULT '',
     price TEXT NOT NULL DEFAULT '',
     format TEXT NOT NULL DEFAULT 'Cetak',
     order_info TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
+  await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS back_cover_url TEXT NOT NULL DEFAULT ''`;
   return sql;
 }
 
@@ -52,6 +55,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
     isbn: String(row.isbn ?? ""),
     status: row.status === "published" ? "published" : "upcoming",
     coverUrl: String(row.cover_url ?? ""),
+    backCoverUrl: String(row.back_cover_url ?? ""),
     price: String(row.price ?? ""),
     format: String(row.format ?? "Cetak"),
     orderInfo: String(row.order_info ?? ""),
@@ -64,7 +68,7 @@ export const getCatalogBooks = createServerFn({ method: "GET" as const }).handle
     const sql = await ensureTable();
     // Include saved cover data so the public catalog can render uploaded covers.
     // Uploaded covers are resized/compressed in the admin form before being saved.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getCatalogBooks failed", error);
@@ -98,9 +102,9 @@ export const saveCatalogBook = createServerFn({ method: "POST" as const })
     try {
       const sql = await ensureTable();
       if (data.id) {
-        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, status=${data.status}, cover_url=${data.coverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
+        await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
       } else {
-        await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, status, cover_url, price, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.status}, ${data.coverUrl.trim()}, ${data.price.trim()}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
+        await sql`INSERT INTO gpm_catalog_books (title, author, category, synopsis, isbn, status, cover_url, back_cover_url, price, format, order_info) VALUES (${data.title.trim()}, ${data.author.trim()}, ${data.category.trim() || "Umum"}, ${data.synopsis.trim()}, ${data.isbn.trim()}, ${data.status}, ${data.coverUrl.trim()}, ${data.backCoverUrl.trim()}, ${data.price.trim()}, ${data.format.trim() || "Cetak"}, ${data.orderInfo.trim()})`;
       }
       return { success: true as const };
     } catch (error) {
