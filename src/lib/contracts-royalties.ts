@@ -37,7 +37,7 @@ export const updateContractForAdmin = createServerFn({ method: "POST" as const }
   .handler(async ({ data }) => {
     const admin = await getAdminSession();
     if (!admin.authenticated) return { success: false as const, error: "Akses admin diperlukan." };
-    if (!["draft","proposed","signed","terminated"].includes(data.status)) return { success: false as const, error: "Status kontrak tidak valid." };
+    if (!["draft","proposed","author_signed","signed","terminated"].includes(data.status)) return { success: false as const, error: "Status kontrak tidak valid." };
     if (data.documentData.length > 2_000_000) return { success: false as const, error: "Dokumen kontrak maksimal 1,5 MB untuk tahap awal." };
     const sql = await ensurePlatformTables();
     const existingContract = await sql`SELECT document_filename FROM gpm_publishing_contracts WHERE id=${data.contractId} LIMIT 1`;
