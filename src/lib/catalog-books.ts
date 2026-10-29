@@ -27,7 +27,7 @@ function database() {
   return neon(url);
 }
 
-async function ensureTable() {
+export async function ensureCatalogTable() {
   const sql = database();
   await sql`CREATE TABLE IF NOT EXISTS gpm_catalog_books (
     id BIGSERIAL PRIMARY KEY,
@@ -76,7 +76,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
 
 export const getCatalogBooks = createServerFn({ method: "GET" as const }).handler(async () => {
   try {
-    const sql = await ensureTable();
+    const sql = await ensureCatalogTable();
     // Include saved cover data so the public catalog can render uploaded covers.
     // Uploaded covers are resized/compressed in the admin form before being saved.
     const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
