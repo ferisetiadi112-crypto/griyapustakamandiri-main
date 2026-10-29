@@ -1,0 +1,36 @@
+name: Refresh Bun lockfile
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/refresh-bun-lockfile.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    if: "!contains(github.event.head_commit.message, '[lockfile-bot]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Refresh lockfile
+        run: bun install
+      - name: Commit lockfile if changed
+        run: |
+          if ! git diff --quiet -- bun.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add bun.lock
+            git commit -m "chore: refresh Bun lockfile [lockfile-bot]"
+            git push
+          fi
