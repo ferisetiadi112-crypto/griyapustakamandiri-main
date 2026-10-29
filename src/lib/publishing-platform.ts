@@ -376,7 +376,17 @@ export const createCheckoutOrder = createServerFn({ method: "POST" as const })
     const paymentConfigured = Boolean(process.env["PAYMENT_GATEWAY_PROVIDER"] && process.env["PAYMENT_GATEWAY_API_KEY"]);
     const paymentStatus = paymentConfigured ? "pending" : "gateway_not_configured";
     const created = await sql`INSERT INTO gpm_orders (order_number,user_id,customer_name,customer_email,customer_phone,shipping_address,shipping_city,shipping_postal_code,shipping_method,subtotal,total,payment_provider,payment_status,order_status) VALUES (${orderNumber},${user?.id ?? null},${data.customerName.trim()},${data.email.trim().toLowerCase()},${data.phone.trim()},${data.address.trim()},${data.city.trim()},${data.postalCode.trim()},${data.shippingMethod.trim()},${subtotal},${subtotal},${process.env["PAYMENT_GATEWAY_PROVIDER"] ?? ""},${paymentStatus},'pending_payment') RETURNING id`;
-    for (const item of orderItems) await sql`INSERT INTO gpm_order_items (order_id,book_id,title_snapshot,format_snapshot,unit_price,quantity,line_total) VALUES (${created[0].id},${item.bookId},${item.title},${item.format},${item.unitPrice},${item.quantity},${item.lineTotal})`;
+    const reservedItems: { bookId: number; quantity: number }[] = [];
+    for (const item of orderItems) {
+      const reserved = await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity-${item.quantity} WHERE id=${item.bookId} AND stock_quantity >= ${item.quantity} RETURNING id`;
+      if (!reserved.length) {
+        for (const previous of reservedItems) await sql`UPDATE gpm_catalog_books SET stock_quantity=stock_quantity+${previous.quantity} WHERE id=${previous.bookId}`;
+        await sql`UPDATE gpm_orders SET order_status='cancelled',payment_status='failed',admin_note='Stok tidak mencukupi saat reservasi.' WHERE id=${created[0].id}`;
+        return { success: false as const, error: "Stok berubah saat checkout. Periksa keranjang dan coba kembali." };
+      }
+      reservedItems.push({ bookId: item.bookId, quantity: item.quantity });
+      await sql`INSERT INTO gpm_order_items (order_id,book_id,title_snapshot,format_snapshot,unit_price,quantity,line_total) VALUES (${created[0].id},${item.bookId},${item.title},${item.format},${item.unitPrice},${item.quantity},${item.lineTotal})`;
+    }
     await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user?.id ?? null},${data.email.trim().toLowerCase()},'order.created','order',${String(created[0].id)},${orderNumber})`;
     return { success: true as const, orderNumber, subtotal, total: subtotal, paymentConfigured, message: paymentConfigured ? "Pesanan tercatat. Gateway harus dikonfigurasi dan diuji sebelum pembayaran diaktifkan." : "Pesanan tercatat, tetapi pembayaran online belum aktif karena konfigurasi payment gateway belum tersedia." };
   });
