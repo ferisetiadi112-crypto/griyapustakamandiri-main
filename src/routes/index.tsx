@@ -31,25 +31,25 @@ const SERVICES = [
     icon: BookOpen,
     title: "Koleksi Buku",
     description: "Jelajahi buku referensi, karya akademik, buku ajar, dan bacaan pilihan dari Griya Pustaka Mandiri.",
-    meta: "Layanan 01",
+    meta: "Katalog",
   },
   {
     icon: PenTool,
     title: "Profil Penulis",
     description: "Kenali penulis dan gagasan yang membentuk setiap karya terbitan kami.",
-    meta: "Layanan 02",
+    meta: "Komunitas",
   },
   {
     icon: BookText,
     title: "Cetak & Digital",
     description: "Temukan pilihan buku cetak dan digital sesuai format yang tersedia.",
-    meta: "Layanan 03",
+    meta: "Format",
   },
   {
     icon: FileCheck,
     title: "Menjadi Penulis",
     description: "Ajukan naskah lengkap untuk seleksi editorial tanpa biaya pendaftaran atau paket penerbitan.",
-    meta: "Layanan 04",
+    meta: "Kolaborasi",
   },
 ];
 
@@ -62,7 +62,7 @@ const STEPS = [
 
 const HIGHLIGHTS = [
   { icon: BookOpen, title: "Karya Akademik", description: "Buku referensi, buku ajar, monograf, dan pengembangan dari karya ilmiah.", meta: "Jenis naskah" },
-  { icon: Printer, title: "Buku Cetak & Digital", description: "Pilihan layanan untuk buku cetak, e-book PDF, atau kombinasi keduanya.", meta: "Format keluaran" },
+  { icon: Printer, title: "Buku Cetak & Digital", description: "Jelajahi buku yang tersedia dalam format cetak atau digital melalui katalog resmi.", meta: "Format keluaran" },
 ];
 
 function Home() {
@@ -127,7 +127,7 @@ function Home() {
               <div className="flex flex-wrap gap-3"><HudChip tone="active">Ruang untuk Gagasan</HudChip><HudChip>Proses Transparan</HudChip></div>
               <div className="max-w-xl">
                 <h2 className="text-balance text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">Buku yang baik dimulai dari proses yang jelas.</h2>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">Kami mengutamakan komunikasi mengenai kebutuhan naskah, cakupan layanan, biaya, revisi, dan tahapan pengerjaan sebelum proses penerbitan dimulai.</p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">Naskah dipilih melalui seleksi editorial. Untuk karya yang disetujui, hak penerbitan, anggaran produksi, jadwal, dan royalti dibahas dalam perjanjian kerja sama.</p>
                 <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2"><HudLabel>Komunikasi Terbuka</HudLabel><HudLabel>Persetujuan Penulis</HudLabel></div>
               </div>
             </div>
@@ -137,7 +137,7 @@ function Home() {
 
       <section className="section">
         <div className="shell">
-          <SectionHeading eyebrow="Alur Penerbitan" title="Empat langkah menuju buku" description="Setiap proyek disesuaikan dengan kondisi naskah dan layanan yang disepakati bersama penulis." />
+          <SectionHeading eyebrow="Alur Penerbitan" title="Empat langkah menuju buku" description="Naskah yang dipilih melalui seleksi editorial dilanjutkan dengan perjanjian, produksi, dan pemasaran buku." />
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((step) => <StepCard key={step.index} {...step} />)}
           </div>
@@ -161,7 +161,7 @@ function Home() {
             <div className="relative mx-auto flex max-w-2xl flex-col items-center">
               <HudChip tone="active">Mulai Perjalanan Buku Anda</HudChip>
               <h2 className="mt-6 text-balance text-3xl font-semibold sm:text-4xl">Naskah Anda, langkah berikutnya.</h2>
-              <p className="mt-4 text-pretty text-muted-foreground">Pelajari pilihan paket atau hubungi kami untuk membahas kebutuhan penerbitan naskah.</p>
+              <p className="mt-4 text-pretty text-muted-foreground">Jelajahi buku yang tersedia atau ajukan naskah lengkap untuk dipertimbangkan oleh tim editorial.</p>
               <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                 <Button asChild variant="hero" size="lg"><Link to="/katalog">Jelajahi Buku <ArrowRight /></Link></Button>
                 <Button asChild variant="glass" size="lg"><Link to="/menjadi-penulis">Ajukan Naskah</Link></Button>
