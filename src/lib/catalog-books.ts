@@ -111,7 +111,7 @@ export const saveCatalogBook = createServerFn({ method: "POST" as const })
     if (!session.authenticated) return { success: false as const, error: "Sesi admin berakhir. Silakan masuk kembali." };
     if (!data.title.trim() || !data.author.trim()) return { success: false as const, error: "Judul dan penulis wajib diisi." };
     try {
-      const sql = await ensureTable();
+      const sql = await ensureCatalogTable();
       if (data.id) {
         await sql`UPDATE gpm_catalog_books SET title=${data.title.trim()}, author=${data.author.trim()}, category=${data.category.trim() || "Umum"}, synopsis=${data.synopsis.trim()}, isbn=${data.isbn.trim()}, qrcbn=${data.qrcbn.trim()}, authors=${JSON.stringify(data.authors ?? [])}, status=${data.status}, cover_url=${data.coverUrl.trim()}, back_cover_url=${data.backCoverUrl.trim()}, price=${data.price.trim()}, stock_quantity=${Math.max(0, Math.floor(data.stockQuantity ?? 0))}, format=${data.format.trim() || "Cetak"}, order_info=${data.orderInfo.trim()} WHERE id=${data.id}`;
       } else {
@@ -130,7 +130,7 @@ export const deleteCatalogBook = createServerFn({ method: "POST" as const })
     const session = await getAdminSession();
     if (!session.authenticated) return { success: false as const, error: "Sesi admin berakhir. Silakan masuk kembali." };
     try {
-      const sql = await ensureTable();
+      const sql = await ensureCatalogTable();
       await sql`DELETE FROM gpm_catalog_books WHERE id=${data.id}`;
       return { success: true as const };
     } catch (error) {
