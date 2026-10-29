@@ -308,7 +308,8 @@ export const submitManuscript = createServerFn({ method: "POST" as const })
     if (!data.declarationAccepted) return { success: false as const, error: "Pernyataan orisinalitas dan hak penggunaan materi wajib disetujui." };
     if (!["application/pdf","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/msword","application/vnd.oasis.opendocument.text"].includes(data.mime)) return { success: false as const, error: "Format naskah harus PDF, DOC, DOCX, atau ODT." };
     if (!/^[^/\\]+\.(pdf|doc|docx|odt)$/i.test(data.filename) || data.filename.length > 180) return { success: false as const, error: "Nama file tidak valid." };
-    if (!data.fileData.startsWith("data:") || data.fileData.length > Math.ceil(MAX_MANUSCRIPT_BYTES * 4 / 3) + 500) return { success: false as const, error: "Ukuran naskah maksimal 2,5 MB untuk tahap awal." };
+    const encodedFile = data.fileData.split(",")[1] ?? "";
+    if (!data.fileData.startsWith("data:" + data.mime + ";base64,") || !/^[A-Za-z0-9+/]+={0,2}$/.test(encodedFile) || data.fileData.length > Math.ceil(MAX_MANUSCRIPT_BYTES * 4 / 3) + 500) return { success: false as const, error: "File naskah tidak valid atau ukurannya melebihi 2,5 MB." };
     const sql = await ensurePlatformTables();
     const code = reference("GPM-NASKAH");
     const rows = await sql`INSERT INTO gpm_author_submissions (reference_code,user_id,title,subtitle,category,synopsis,target_reader,word_count,format_preference,manuscript_filename,manuscript_mime,manuscript_data,declaration_accepted,status) VALUES (${code},${user!.id},${title},${(data.subtitle ?? "").trim()},${data.category.trim() || "Umum"},${data.synopsis.trim()},${data.targetReader.trim()},${Math.max(0,Math.floor(data.wordCount || 0))},${data.formatPreference},${data.filename},${data.mime},${data.fileData},TRUE,'submitted') RETURNING id`;
