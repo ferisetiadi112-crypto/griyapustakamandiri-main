@@ -17,6 +17,9 @@ const GROUPS = [
     { to: "/about", label: "Tentang Kami" },
     { to: "/contact", label: "Kontak" },
     { to: "/keranjang", label: "Keranjang Belanja" },
+    { to: "/syarat-pembelian", label: "Syarat Pembelian" },
+    { to: "/kebijakan-privasi", label: "Kebijakan Privasi" },
+    { to: "/kebijakan-naskah", label: "Kebijakan Naskah" },
   ] },
 ] as const;
 
