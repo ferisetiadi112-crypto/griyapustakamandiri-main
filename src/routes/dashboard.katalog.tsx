@@ -59,21 +59,23 @@ function CatalogAdmin() {
         img.onerror = () => reject(new Error("File gambar tidak dapat dibuka."));
         img.src = dataUrl;
       });
-      const ratio = image.width / image.height;
-      const a4Ratio = 210 / 297;
-      if (image.height <= image.width || Math.abs(ratio - a4Ratio) / a4Ratio > 0.06) {
-        throw new Error("Gunakan sampul portrait dengan proporsi A4 (210 × 297 mm), bukan landscape atau persegi.");
+      if (image.height <= image.width) {
+        throw new Error("Pilih gambar sampul dalam posisi portrait (tegak), bukan landscape atau persegi.");
       }
-      const maxHeight = 1200;
-      const scale = Math.min(1, maxHeight / image.height);
+      // Normalize portrait covers to an A4 canvas instead of rejecting slightly different book-cover ratios.
       const canvas = document.createElement("canvas");
-      canvas.width = Math.round(image.width * scale);
-      canvas.height = Math.round(image.height * scale);
+      canvas.width = Math.round(1200 * (210 / 297));
+      canvas.height = 1200;
       const context = canvas.getContext("2d");
       if (!context) throw new Error("Gambar tidak dapat diproses pada browser ini.");
       context.fillStyle = "#ffffff";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
+      const drawWidth = Math.round(image.width * scale);
+      const drawHeight = Math.round(image.height * scale);
+      const offsetX = Math.round((canvas.width - drawWidth) / 2);
+      const offsetY = Math.round((canvas.height - drawHeight) / 2);
+      context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
       let quality = 0.78;
       let optimized = canvas.toDataURL("image/jpeg", quality);
       while (optimized.length > 220_000 && quality > 0.38) {
