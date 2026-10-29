@@ -179,8 +179,8 @@ function Katalog() {
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
                       {visibleBooks.map((book) => (
                         <article key={book.id} className="overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-lg">
-                          <button type="button" onClick={() => setSelectedBook(book)} className="block w-full bg-white p-2" aria-label={`Lihat detail ${book.title}`}>
-                            {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="aspect-[3/4] w-full object-contain" /> : <div className="grid aspect-[3/4] place-items-center bg-secondary/30"><BookOpen className="size-10 text-muted-foreground/50" /></div>}
+                          <button type="button" onClick={() => setSelectedBook(book)} className="block w-full overflow-hidden bg-white p-0" aria-label={`Lihat detail ${book.title}`}>
+                            {book.coverUrl ? <img src={book.coverUrl} alt={`Sampul buku ${book.title}`} loading="lazy" className="aspect-[3/4] w-full scale-110 object-cover" /> : <div className="grid aspect-[3/4] place-items-center bg-secondary/30"><BookOpen className="size-10 text-muted-foreground/50" /></div>}
                           </button>
                           <div className="p-3">
                             <p className="text-[10px] font-medium uppercase tracking-wide text-primary">{book.category}</p>
