@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, ChartNoAxesCombined, FileSignature, FileText, LayoutDashboard, Menu, ShoppingBag, Users, X } from "lucide-react";
+import { BookOpen, ChartNoAxesCombined, FileSignature, FileText, LayoutDashboard, Menu, ShoppingBag, Users, UsersRound, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/hey/Logo";
@@ -13,6 +13,7 @@ const NAV = [
   { to: "/dashboard/kontrak", label: "Kontrak & Produksi", icon: FileSignature },
   { to: "/dashboard/pesanan", label: "Pesanan Buku", icon: ShoppingBag },
   { to: "/dashboard/pengguna", label: "Pengguna", icon: Users },
+  { to: "/dashboard/penulis", label: "Kelola Penulis", icon: UsersRound },
   { to: "/dashboard/royalti", label: "Royalti & Laporan", icon: ChartNoAxesCombined },
 ] as const;
 
