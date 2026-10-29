@@ -27,8 +27,8 @@ async function requireAuthorAdmin() {
   const admin = await getAdminSession();
   if (admin.authenticated) return;
   const session = await getUserSession();
-  if (session.success && session.user?.roles.some((role) => role === "admin" || role === "editor")) return;
-  throw new Error("Akses ditolak. Masuk sebagai admin atau editor terlebih dahulu.");
+  if (session.success && session.user?.roles.includes("admin")) return;
+  throw new Error("Akses ditolak. Masuk sebagai admin terlebih dahulu.");
 }
 export const getPublicAuthorProfiles = createServerFn({ method: "GET" as const }).handler(async () => {
   try {
