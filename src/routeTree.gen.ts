@@ -32,6 +32,7 @@ import { Route as ApiAuthCallbackRouteImport } from './routes/api.auth.callback'
 import { Route as ApiAuthTiktokRouteImport } from './routes/api.auth.tiktok'
 import { Route as ApiAuthYoutubeRouteImport } from './routes/api.auth.youtube'
 import { Route as ApiAuthYoutubeCallbackRouteImport } from './routes/api.auth.youtube.callback'
+import { Route as PaketPenerbitanRouteImport } from './routes/paket-penerbitan'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AboutRoute = AboutRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaketPenerbitanRoute = PaketPenerbitanRouteImport.update({
+  id: '/paket-penerbitan',
+  path: '/paket-penerbitan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -153,6 +159,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -178,6 +187,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -203,6 +213,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/paket-penerbitan': typeof PaketPenerbitanRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/future': typeof FutureRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/paket-penerbitan'
     | '/dashboard'
     | '/future'
     | '/how-it-works'
@@ -255,6 +267,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/paket-penerbitan'
     | '/future'
     | '/how-it-works'
     | '/login'
@@ -268,31 +281,6 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/integrations/tiktok'
     | '/dashboard'
-    | '/accounts/tiktok/connect'
-    | '/accounts/tiktok/workspace'
-    | '/api/auth/callback'
-    | '/api/auth/tiktok'
-    | '/api/auth/youtube'
-    | '/api/auth/youtube/callback'
-  id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/contact'
-    | '/dashboard'
-    | '/future'
-    | '/how-it-works'
-    | '/login'
-    | '/technology'
-    | '/auth/callback'
-    | '/dashboard/analytics'
-    | '/dashboard/automation'
-    | '/dashboard/content'
-    | '/dashboard/create'
-    | '/dashboard/integrations'
-    | '/dashboard/settings'
-    | '/integrations/tiktok'
-    | '/dashboard/'
     | '/accounts/tiktok/connect'
     | '/accounts/tiktok/workspace'
     | '/api/auth/callback'
@@ -300,254 +288,4 @@ export interface FileRouteTypes {
     | '/api/auth/youtube'
     | '/api/auth/youtube/callback'
   fileRoutesById: FileRoutesById
-}
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  ContactRoute: typeof ContactRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
-  FutureRoute: typeof FutureRoute
-  HowItWorksRoute: typeof HowItWorksRoute
-  LoginRoute: typeof LoginRoute
-  TechnologyRoute: typeof TechnologyRoute
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  IntegrationsTiktokRoute: typeof IntegrationsTiktokRoute
-  AccountsTiktokConnectRoute: typeof AccountsTiktokConnectRoute
-  AccountsTiktokWorkspaceRoute: typeof AccountsTiktokWorkspaceRoute
-  ApiAuthCallbackRoute: typeof ApiAuthCallbackRoute
-  ApiAuthTiktokRoute: typeof ApiAuthTiktokRoute
-  ApiAuthYoutubeRoute: typeof ApiAuthYoutubeRouteWithChildren
-}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/future': {
-      id: '/future'
-      path: '/future'
-      fullPath: '/future'
-      preLoaderRoute: typeof FutureRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/technology': {
-      id: '/technology'
-      path: '/technology'
-      fullPath: '/technology'
-      preLoaderRoute: typeof TechnologyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/analytics': {
-      id: '/dashboard/analytics'
-      path: '/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof DashboardAnalyticsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/automation': {
-      id: '/dashboard/automation'
-      path: '/automation'
-      fullPath: '/dashboard/automation'
-      preLoaderRoute: typeof DashboardAutomationRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/content': {
-      id: '/dashboard/content'
-      path: '/content'
-      fullPath: '/dashboard/content'
-      preLoaderRoute: typeof DashboardContentRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/create': {
-      id: '/dashboard/create'
-      path: '/create'
-      fullPath: '/dashboard/create'
-      preLoaderRoute: typeof DashboardCreateRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/integrations': {
-      id: '/dashboard/integrations'
-      path: '/integrations'
-      fullPath: '/dashboard/integrations'
-      preLoaderRoute: typeof DashboardIntegrationsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
-      path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/integrations/tiktok': {
-      id: '/integrations/tiktok'
-      path: '/integrations/tiktok'
-      fullPath: '/integrations/tiktok'
-      preLoaderRoute: typeof IntegrationsTiktokRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/accounts/tiktok/connect': {
-      id: '/accounts/tiktok/connect'
-      path: '/accounts/tiktok/connect'
-      fullPath: '/accounts/tiktok/connect'
-      preLoaderRoute: typeof AccountsTiktokConnectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/accounts/tiktok/workspace': {
-      id: '/accounts/tiktok/workspace'
-      path: '/accounts/tiktok/workspace'
-      fullPath: '/accounts/tiktok/workspace'
-      preLoaderRoute: typeof AccountsTiktokWorkspaceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/callback': {
-      id: '/api/auth/callback'
-      path: '/api/auth/callback'
-      fullPath: '/api/auth/callback'
-      preLoaderRoute: typeof ApiAuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/tiktok': {
-      id: '/api/auth/tiktok'
-      path: '/api/auth/tiktok'
-      fullPath: '/api/auth/tiktok'
-      preLoaderRoute: typeof ApiAuthTiktokRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/youtube': {
-      id: '/api/auth/youtube'
-      path: '/api/auth/youtube'
-      fullPath: '/api/auth/youtube'
-      preLoaderRoute: typeof ApiAuthYoutubeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/youtube/callback': {
-      id: '/api/auth/youtube/callback'
-      path: '/callback'
-      fullPath: '/api/auth/youtube/callback'
-      preLoaderRoute: typeof ApiAuthYoutubeCallbackRouteImport
-      parentRoute: typeof ApiAuthYoutubeRoute
-    }
-  }
-}
-
-interface DashboardRouteChildren {
-  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
-  DashboardAutomationRoute: typeof DashboardAutomationRoute
-  DashboardContentRoute: typeof DashboardContentRoute
-  DashboardCreateRoute: typeof DashboardCreateRoute
-  DashboardIntegrationsRoute: typeof DashboardIntegrationsRoute
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
-  DashboardAutomationRoute: DashboardAutomationRoute,
-  DashboardContentRoute: DashboardContentRoute,
-  DashboardCreateRoute: DashboardCreateRoute,
-  DashboardIntegrationsRoute: DashboardIntegrationsRoute,
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
-
-interface ApiAuthYoutubeRouteChildren {
-  ApiAuthYoutubeCallbackRoute: typeof ApiAuthYoutubeCallbackRoute
-}
-
-const ApiAuthYoutubeRouteChildren: ApiAuthYoutubeRouteChildren = {
-  ApiAuthYoutubeCallbackRoute: ApiAuthYoutubeCallbackRoute,
-}
-
-const ApiAuthYoutubeRouteWithChildren = ApiAuthYoutubeRoute._addFileChildren(
-  ApiAuthYoutubeRouteChildren,
-)
-
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  ContactRoute: ContactRoute,
-  DashboardRoute: DashboardRouteWithChildren,
-  FutureRoute: FutureRoute,
-  HowItWorksRoute: HowItWorksRoute,
-  LoginRoute: LoginRoute,
-  TechnologyRoute: TechnologyRoute,
-  AuthCallbackRoute: AuthCallbackRoute,
-  IntegrationsTiktokRoute: IntegrationsTiktokRoute,
-  AccountsTiktokConnectRoute: AccountsTiktokConnectRoute,
-  AccountsTiktokWorkspaceRoute: AccountsTiktokWorkspaceRoute,
-  ApiAuthCallbackRoute: ApiAuthCallbackRoute,
-  ApiAuthTiktokRoute: ApiAuthTiktokRoute,
-  ApiAuthYoutubeRoute: ApiAuthYoutubeRouteWithChildren,
-}
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
 }
