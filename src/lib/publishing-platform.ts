@@ -114,7 +114,6 @@ export async function ensurePlatformTables() {
   )`;
   await sql`ALTER TABLE gpm_orders ADD COLUMN IF NOT EXISTS stock_released BOOLEAN NOT NULL DEFAULT FALSE`;
   await sql`ALTER TABLE gpm_orders ADD COLUMN IF NOT EXISTS stock_reserved BOOLEAN NOT NULL DEFAULT FALSE`;
-  await sql`ALTER TABLE gpm_orders ADD COLUMN IF NOT EXISTS stock_reserved BOOLEAN NOT NULL DEFAULT FALSE`;
   await sql`CREATE TABLE IF NOT EXISTS gpm_order_items (
     id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL REFERENCES gpm_orders(id) ON DELETE CASCADE,
