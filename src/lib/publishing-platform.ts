@@ -429,6 +429,7 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
     if (!allowedOrder.includes(data.orderStatus) || !allowedPayment.includes(data.paymentStatus)) return { success: false as const, error: "Status pesanan atau pembayaran tidak valid." };
     if (!Number.isFinite(data.shippingCost) || data.shippingCost < 0 || data.shippingCost > 10000000) return { success: false as const, error: "Biaya pengiriman tidak valid." };
     if (data.paymentStatus === "paid") return { success: false as const, error: "Pembayaran online belum terintegrasi. Status lunas harus berasal dari callback payment gateway yang tervalidasi." };
+    if (["processing","shipped","completed"].includes(data.orderStatus) && data.paymentStatus !== "paid") return { success: false as const, error: "Pesanan hanya dapat diproses atau dikirim setelah pembayaran terverifikasi." };
     const sql = await ensurePlatformTables();
     const existing = await sql`SELECT order_status,stock_released,stock_reserved FROM gpm_orders WHERE id=${data.orderId} LIMIT 1`;
     if (!existing.length) return { success: false as const, error: "Pesanan tidak ditemukan." };
