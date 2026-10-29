@@ -226,8 +226,10 @@ function Katalog() {
               <div className="pt-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selectedBook.category}</p>
                 <h2 id="book-detail-title" className="mt-2 pr-7 text-2xl font-bold">{selectedBook.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">Oleh {selectedBook.authors?.length ? selectedBook.authors.map((person) => person.name).filter(Boolean).join(", ") : selectedBook.author}</p>
-                {selectedBook.authors?.some((person) => person.doi.trim()) && <div className="mt-3 space-y-1 text-xs text-muted-foreground">{selectedBook.authors.filter((person) => person.doi.trim()).map((person, index) => <p key={`${person.name}-${index}`}>DOI {person.name}: {person.doi}</p>)}</div>}
+                <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  <p>Oleh:</p>
+                  {(selectedBook.authors?.length ? selectedBook.authors : [{ name: selectedBook.author, doi: "" }]).filter((person) => person.name.trim()).map((person, index) => <p key={`${person.name}-${index}`} className="break-words">{person.name}{person.doi.trim() ? <span className="text-xs"> (DOI: {person.doi})</span> : null}</p>)}
+                </div>
                 <p className="mt-3 text-sm">{selectedBook.status === "published" ? "Telah Terbit" : "Segera Terbit"}</p>
                 {selectedBook.synopsis && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{selectedBook.synopsis.length > 350 ? `${selectedBook.synopsis.slice(0, 350).trimEnd()}…` : selectedBook.synopsis}</p>}
                 <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
