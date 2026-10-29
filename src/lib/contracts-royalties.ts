@@ -83,7 +83,7 @@ export const submitSignedContract = createServerFn({ method: "POST" as const })
     const user = session.user;
     if (!user || !user.roles.includes("author")) return { success: false as const, error: "Akun penulis diperlukan." };
     if (!user.emailVerified) return { success: false as const, error: "Verifikasi email diperlukan." };
-    if (!/^[^/\\\\]+\\.(pdf|doc|docx)$/i.test(data.filename) || data.fileData.length > 2_000_000 || !data.fileData.startsWith("data:")) return { success: false as const, error: "File harus PDF/DOC/DOCX dan maksimal 1,5 MB." };
+    if (!/^[^/\\\\]+\.(pdf|doc|docx)$/i.test(data.filename) || data.fileData.length > 2_000_000 || !data.fileData.startsWith("data:")) return { success: false as const, error: "File harus PDF/DOC/DOCX dan maksimal 1,5 MB." };
     const sql = await ensurePlatformTables();
     const rows = await sql`SELECT id FROM gpm_publishing_contracts WHERE id=${data.contractId} AND user_id=${user.id} AND status=${"proposed"} LIMIT 1`;
     if (!rows.length) return { success: false as const, error: "Kontrak tidak ditemukan atau belum ditawarkan." };
