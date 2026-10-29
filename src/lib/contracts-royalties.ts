@@ -40,6 +40,10 @@ export const updateContractForAdmin = createServerFn({ method: "POST" as const }
     if (!["draft","proposed","signed","terminated"].includes(data.status)) return { success: false as const, error: "Status kontrak tidak valid." };
     if (data.documentData.length > 2_000_000) return { success: false as const, error: "Dokumen kontrak maksimal 1,5 MB untuk tahap awal." };
     const sql = await ensurePlatformTables();
+    const existingContract = await sql`SELECT document_filename FROM gpm_publishing_contracts WHERE id=${data.contractId} LIMIT 1`;
+    if (!existingContract.length) return { success: false as const, error: "Kontrak tidak ditemukan." };
+    const currentDocument = String((existingContract[0] as { document_filename: string }).document_filename ?? "");
+    if (data.status === "signed" && !data.documentData && !currentDocument) return { success: false as const, error: "Unggah salinan kontrak yang telah ditandatangani sebelum mengubah status menjadi ditandatangani." };
     if (data.bookId && data.bookId > 0) {
       const book = await sql`SELECT id FROM gpm_catalog_books WHERE id=${data.bookId} LIMIT 1`;
       if (!book.length) return { success: false as const, error: "Buku katalog tidak ditemukan." };
