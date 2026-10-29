@@ -16,7 +16,7 @@ export const Route = createFileRoute("/dashboard/katalog")({
 type BookForm = Omit<CatalogBook, "id" | "createdAt">;
 const emptyForm: BookForm = {
   title: "", author: "", category: "Sosial", synopsis: "", isbn: "",
-  status: "upcoming", coverUrl: "", price: "", format: "Cetak", orderInfo: "",
+  status: "upcoming", coverUrl: "", backCoverUrl: "", price: "", format: "Cetak", orderInfo: "",
 };
 
 function CatalogAdmin() {
@@ -31,7 +31,7 @@ function CatalogAdmin() {
   const [error, setError] = useState("");
   const [coverNotice, setCoverNotice] = useState("");
 
-  async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>, target: "coverUrl" | "backCoverUrl") {
     const file = event.target.files?.[0];
     if (!file) return;
     setCoverNotice("");
@@ -83,8 +83,8 @@ function CatalogAdmin() {
         optimized = canvas.toDataURL("image/jpeg", quality);
       }
       if (optimized.length > 260_000) throw new Error("Sampul masih terlalu besar setelah dioptimalkan. Pilih gambar yang lebih sederhana atau kompres gambar terlebih dahulu.");
-      change("coverUrl", optimized);
-      setCoverNotice("Sampul siap digunakan. Gambar telah dioptimalkan otomatis.");
+      change(target, optimized);
+      setCoverNotice(target === "coverUrl" ? "Sampul depan siap digunakan dan telah dioptimalkan." : "Sampul belakang siap digunakan dan telah dioptimalkan.");
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Sampul gagal diproses.");
       event.target.value = "";
@@ -164,25 +164,45 @@ function CatalogAdmin() {
           <Field label="Status penerbitan"><select value={form.status} onChange={(e) => change("status", e.target.value as BookForm["status"])}><option value="upcoming">Segera Terbit</option><option value="published">Telah Terbit</option></select></Field>
           <Field label="Format buku"><select value={form.format} onChange={(e) => change("format", e.target.value)}><option>Cetak</option><option>E-book</option><option>Cetak dan E-book</option></select></Field>
           <Field label="Harga (opsional)"><input value={form.price} onChange={(e) => change("price", e.target.value)} placeholder="Contoh: Rp75.000 atau Hubungi penerbit" /></Field>
-          <div className="md:col-span-2">
-            <label htmlFor="cover-upload" className="mb-2 block text-sm font-medium">Unggah sampul buku (A4 portrait)</label>
-            <input
-              id="cover-upload"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(event) => void handleCoverUpload(event)}
-              className="block w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium"
-            />
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Format JPG, PNG, atau WebP. Maksimal 3 MB sebelum diproses. Sampul harus tegak (portrait) dengan rasio A4 210 × 297 mm; ukuran desain yang disarankan 1240 × 1754 px. Gambar akan dioptimalkan otomatis agar katalog tetap cepat dibuka.</p>
-            {form.coverUrl && <div className="mt-3 flex items-start gap-4 rounded-xl border border-border p-3">
-              <img src={form.coverUrl} alt="Pratinjau sampul buku" className="h-40 w-auto max-w-28 rounded-md border border-border object-contain" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">Pratinjau sampul aktif</p>
-                <p className="mt-1 text-xs text-muted-foreground">Sampul ini akan ditampilkan pada katalog publik.</p>
-                <Button type="button" variant="glass" size="sm" className="mt-3" onClick={() => change("coverUrl", "")}>Hapus sampul</Button>
-              </div>
-            </div>}
-            {coverNotice && <p role="status" className="mt-2 text-sm text-muted-foreground">{coverNotice}</p>}
+          <div className="md:col-span-2 space-y-5">
+            <div>
+              <label htmlFor="cover-upload" className="mb-2 block text-sm font-medium">Unggah sampul depan (A4 portrait)</label>
+              <input
+                id="cover-upload"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => void handleCoverUpload(event, "coverUrl")}
+                className="block w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium"
+              />
+              {form.coverUrl && <div className="mt-3 flex items-start gap-4 rounded-xl border border-border p-3">
+                <img src={form.coverUrl} alt="Pratinjau sampul depan" className="h-40 w-auto max-w-28 rounded-md border border-border object-contain" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">Sampul depan aktif</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Ditampilkan di kartu katalog dan detail buku.</p>
+                  <Button type="button" variant="glass" size="sm" className="mt-3" onClick={() => change("coverUrl", "")}>Hapus sampul depan</Button>
+                </div>
+              </div>}
+            </div>
+            <div>
+              <label htmlFor="back-cover-upload" className="mb-2 block text-sm font-medium">Unggah sampul belakang (opsional)</label>
+              <input
+                id="back-cover-upload"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => void handleCoverUpload(event, "backCoverUrl")}
+                className="block w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium"
+              />
+              {form.backCoverUrl && <div className="mt-3 flex items-start gap-4 rounded-xl border border-border p-3">
+                <img src={form.backCoverUrl} alt="Pratinjau sampul belakang" className="h-40 w-auto max-w-28 rounded-md border border-border object-contain" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">Sampul belakang aktif</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Ditampilkan di bagian bawah sampul depan pada detail buku.</p>
+                  <Button type="button" variant="glass" size="sm" className="mt-3" onClick={() => change("backCoverUrl", "")}>Hapus sampul belakang</Button>
+                </div>
+              </div>}
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">Format JPG, PNG, atau WebP. Maksimal 3 MB per file. Gambar harus tegak (portrait); sistem akan menyesuaikan dan mengoptimalkan gambar otomatis.</p>
+            {coverNotice && <p role="status" className="text-sm text-muted-foreground">{coverNotice}</p>}
           </div>
           <div className="md:col-span-2">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
