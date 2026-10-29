@@ -15,6 +15,7 @@ export type CatalogBook = {
   coverUrl: string;
   backCoverUrl: string;
   price: string;
+  stockQuantity: number;
   format: string;
   orderInfo: string;
   createdAt: string;
@@ -40,6 +41,7 @@ async function ensureTable() {
     cover_url TEXT NOT NULL DEFAULT '',
     back_cover_url TEXT NOT NULL DEFAULT '',
     price TEXT NOT NULL DEFAULT '',
+    stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
     format TEXT NOT NULL DEFAULT 'Cetak',
     order_info TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -47,6 +49,7 @@ async function ensureTable() {
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS back_cover_url TEXT NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS authors TEXT NOT NULL DEFAULT '[]'`;
   await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS qrcbn TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE gpm_catalog_books ADD COLUMN IF NOT EXISTS stock_quantity INTEGER NOT NULL DEFAULT 0`;
   return sql;
 }
 
@@ -64,6 +67,7 @@ function mapBook(row: Record<string, unknown>): CatalogBook {
     coverUrl: String(row.cover_url ?? ""),
     backCoverUrl: String(row.back_cover_url ?? ""),
     price: String(row.price ?? ""),
+    stockQuantity: Math.max(0, Number(row.stock_quantity ?? 0)),
     format: String(row.format ?? "Cetak"),
     orderInfo: String(row.order_info ?? ""),
     createdAt: String(row.created_at ?? ""),
@@ -75,7 +79,7 @@ export const getCatalogBooks = createServerFn({ method: "GET" as const }).handle
     const sql = await ensureTable();
     // Include saved cover data so the public catalog can render uploaded covers.
     // Uploaded covers are resized/compressed in the admin form before being saved.
-    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
+    const rows = await sql`SELECT id, title, author, category, synopsis, isbn, qrcbn, authors, status, cover_url, back_cover_url, price, stock_quantity, format, order_info, created_at FROM gpm_catalog_books ORDER BY created_at DESC, id DESC`;
     return { success: true as const, books: rows.map((row) => mapBook(row as Record<string, unknown>)) };
   } catch (error) {
     console.error("getCatalogBooks failed", error);
