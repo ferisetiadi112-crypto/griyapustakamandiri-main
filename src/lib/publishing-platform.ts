@@ -311,7 +311,8 @@ export const submitManuscript = createServerFn({ method: "POST" as const })
 
 export const listSubmissionsForStaff = createServerFn({ method: "GET" as const }).handler(async () => {
   const user = await currentUser();
-  requireRole(user, ["editor","admin","leadership"]);
+  const adminSession = await import("@/lib/admin-auth").then((m) => m.getAdminSession());
+  if (!adminSession.authenticated) requireRole(user, ["editor","admin","leadership"]);
   const sql = await ensurePlatformTables();
   const rows = await sql`SELECT s.id,s.reference_code,s.title,s.category,s.status,s.editorial_notes,s.editor_recommendation,s.final_decision,s.submitted_at,u.name AS author_name,u.email AS author_email FROM gpm_author_submissions s JOIN gpm_users u ON u.id=s.user_id ORDER BY s.submitted_at DESC`;
   return { success: true as const, submissions: rows };
@@ -321,7 +322,8 @@ export const downloadManuscript = createServerFn({ method: "POST" as const })
   .validator((input: { submissionId: number }) => input)
   .handler(async ({ data }) => {
     const user = await currentUser();
-    requireRole(user, ["editor","admin","leadership"]);
+    const adminSession = await import("@/lib/admin-auth").then((m) => m.getAdminSession());
+    if (!adminSession.authenticated) requireRole(user, ["editor","admin","leadership"]);
     const sql = await ensurePlatformTables();
     const rows = await sql`SELECT id,reference_code,manuscript_filename,manuscript_mime,manuscript_data FROM gpm_author_submissions WHERE id=${data.submissionId} LIMIT 1`;
     if (!rows.length) return { success: false as const, error: "Naskah tidak ditemukan." };
@@ -386,7 +388,8 @@ export const listMyOrders = createServerFn({ method: "GET" as const }).handler(a
 
 export const listOrdersForStaff = createServerFn({ method: "GET" as const }).handler(async () => {
   const user = await currentUser();
-  requireRole(user, ["admin","finance","leadership"]);
+  const adminSession = await import("@/lib/admin-auth").then((m) => m.getAdminSession());
+  if (!adminSession.authenticated) requireRole(user, ["admin","finance","leadership"]);
   const sql = await ensurePlatformTables();
   const rows = await sql`SELECT id,order_number,customer_name,customer_email,customer_phone,shipping_address,shipping_city,shipping_postal_code,shipping_method,shipping_cost,subtotal,total,payment_status,order_status,tracking_number,created_at FROM gpm_orders ORDER BY created_at DESC LIMIT 500`;
   return { success: true as const, orders: rows };
@@ -396,11 +399,12 @@ export const updateOrderForStaff = createServerFn({ method: "POST" as const })
   .validator((input: { orderId: number; orderStatus: string; paymentStatus: string; shippingMethod: string; trackingNumber: string; adminNote: string }) => input)
   .handler(async ({ data }) => {
     const user = await currentUser();
-    requireRole(user, ["admin","finance","leadership"]);
+    const adminSession = await import("@/lib/admin-auth").then((m) => m.getAdminSession());
+    if (!adminSession.authenticated) requireRole(user, ["admin","finance","leadership"]);
     const allowedOrder = ["pending_payment","processing","shipped","completed","cancelled","refunded"];
     const allowedPayment = ["gateway_not_configured","pending","paid","failed","refunded"];
     if (!allowedOrder.includes(data.orderStatus) || !allowedPayment.includes(data.paymentStatus)) return { success: false as const, error: "Status pesanan atau pembayaran tidak valid." };
-    if (data.paymentStatus === "paid" && !user!.roles.some((role) => role === "admin" || role === "finance")) return { success: false as const, error: "Hanya admin atau keuangan yang dapat memverifikasi pembayaran." };
+    if (data.paymentStatus === "paid" && !adminSession.authenticated && !user?.roles.some((role) => role === "admin" || role === "finance")) return { success: false as const, error: "Hanya admin atau keuangan yang dapat memverifikasi pembayaran." };
     const sql = await ensurePlatformTables();
     await sql`UPDATE gpm_orders SET order_status=${data.orderStatus},payment_status=${data.paymentStatus},shipping_method=${data.shippingMethod.trim()},tracking_number=${data.trackingNumber.trim()},admin_note=${data.adminNote.trim()},updated_at=NOW() WHERE id=${data.orderId}`;
     await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${user!.id},${user!.email},'order.updated','order',${String(data.orderId)},${data.orderStatus + '/' + data.paymentStatus})`;
