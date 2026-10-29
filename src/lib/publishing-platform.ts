@@ -362,11 +362,12 @@ export const createCheckoutOrder = createServerFn({ method: "POST" as const })
     const orderItems: { bookId: number; title: string; format: string; unitPrice: number; quantity: number; lineTotal: number }[] = [];
     for (const item of data.items) {
       const quantity = Math.max(1, Math.min(20, Math.floor(item.quantity)));
-      const books = await sql`SELECT id,title,format,price,status FROM gpm_catalog_books WHERE id=${item.bookId} AND status='published' LIMIT 1`;
+      const books = await sql`SELECT id,title,format,price,status,stock_quantity FROM gpm_catalog_books WHERE id=${item.bookId} AND status='published' LIMIT 1`;
       if (!books.length) return { success: false as const, error: "Salah satu buku tidak ditemukan atau belum tersedia untuk dibeli." };
-      const book = books[0] as { id: number; title: string; format: string; price: string; status: string };
+      const book = books[0] as { id: number; title: string; format: string; price: string; status: string; stock_quantity: number };
       const unitPrice = parseBookPrice(book.price);
       if (unitPrice <= 0) return { success: false as const, error: `Harga buku "${book.title}" belum ditetapkan.` };
+      if (quantity > Number(book.stock_quantity ?? 0)) return { success: false as const, error: `Stok buku "${book.title}" tidak mencukupi.` };
       orderItems.push({ bookId: Number(book.id), title: String(book.title), format: String(book.format), unitPrice, quantity, lineTotal: unitPrice * quantity });
     }
     const subtotal = orderItems.reduce((sum, item) => sum + item.lineTotal, 0);
