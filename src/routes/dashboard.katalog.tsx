@@ -16,7 +16,7 @@ export const Route = createFileRoute("/dashboard/katalog")({
 type BookForm = Omit<CatalogBook, "id" | "createdAt">;
 const emptyForm: BookForm = {
   title: "", author: "", authors: [{ name: "", doi: "" }], category: "Sosial", synopsis: "", isbn: "", qrcbn: "",
-  status: "upcoming", coverUrl: "", backCoverUrl: "", price: "", format: "Cetak", orderInfo: "",
+  status: "upcoming", coverUrl: "", backCoverUrl: "", price: "", stockQuantity: 0, format: "Cetak", orderInfo: "",
 };
 
 function CatalogAdmin() {
@@ -197,7 +197,8 @@ function CatalogAdmin() {
           <Field label="QRCBN"><input value={form.qrcbn} onChange={(e) => change("qrcbn", e.target.value)} placeholder="Nomor QRCBN (jika tersedia)" /></Field>
           <Field label="Status penerbitan"><select value={form.status} onChange={(e) => change("status", e.target.value as BookForm["status"])}><option value="upcoming">Segera Terbit</option><option value="published">Telah Terbit</option></select></Field>
           <Field label="Format buku"><select value={form.format} onChange={(e) => change("format", e.target.value)}><option>Cetak</option><option>E-book</option><option>Cetak dan E-book</option></select></Field>
-          <Field label="Harga (opsional)"><input value={form.price} onChange={(e) => change("price", e.target.value)} placeholder="Contoh: Rp75.000 atau Hubungi penerbit" /></Field>
+          <Field label="Harga (Rp)"><input value={form.price} onChange={(e) => change("price", e.target.value)} placeholder="Contoh: Rp75.000" /></Field>
+          <Field label="Stok tersedia"><input type="number" min={0} max={1000000} value={form.stockQuantity} onChange={(e) => change("stockQuantity", Math.max(0, Number(e.target.value) || 0))} /></Field>
           <div className="md:col-span-2 space-y-5">
             <div>
               <label htmlFor="cover-upload" className="mb-2 block text-sm font-medium">Unggah sampul depan (A4 portrait)</label>
@@ -271,7 +272,7 @@ function CatalogAdmin() {
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-border px-2.5 py-1 text-xs">{book.status === "published" ? "Telah Terbit" : "Segera Terbit"}</span><span className="text-xs text-muted-foreground">{book.category}</span></div>
               <h3 className="mt-2 font-semibold">{book.title}</h3><p className="mt-1 text-sm text-muted-foreground">{book.author}</p>
-              <p className="mt-1 text-xs text-muted-foreground">ISBN: {book.isbn || "Belum tersedia"} · QRCBN: {book.qrcbn || "Belum tersedia"} · {book.format}</p>
+              <p className="mt-1 text-xs text-muted-foreground">ISBN: {book.isbn || "Belum tersedia"} · QRCBN: {book.qrcbn || "Belum tersedia"} · Stok: {book.stockQuantity} · {book.format}</p>
             </div>
             <div className="flex shrink-0 gap-2"><Button variant="glass" size="sm" onClick={() => editBook(book)}><Pencil className="size-4" /> Edit</Button><Button variant="glass" size="sm" onClick={() => void deleteBook(book)}><Trash2 className="size-4" /> Hapus</Button></div>
           </Panel>)}
