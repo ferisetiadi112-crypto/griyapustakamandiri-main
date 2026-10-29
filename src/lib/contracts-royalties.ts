@@ -39,7 +39,7 @@ export const updateContractForAdmin = createServerFn({ method: "POST" as const }
     if (!["draft","proposed","signed","terminated"].includes(data.status)) return { success: false as const, error: "Status kontrak tidak valid." };
     if (data.documentData.length > 2_000_000) return { success: false as const, error: "Dokumen kontrak maksimal 1,5 MB untuk tahap awal." };
     const sql = await ensurePlatformTables();
-    await sql`UPDATE gpm_publishing_contracts SET status=${data.status},document_filename=${data.documentFilename.slice(0,180)},document_data=${data.documentData},signed_at=CASE WHEN ${data.status}='signed' THEN COALESCE(signed_at,NOW()) ELSE signed_at END,updated_at=NOW() WHERE id=${data.contractId}`;
+    await sql`UPDATE gpm_publishing_contracts SET status=${data.status},document_filename=CASE WHEN ${data.documentData}<>'' THEN ${data.documentFilename.slice(0,180)} ELSE document_filename END,document_data=CASE WHEN ${data.documentData}<>'' THEN ${data.documentData} ELSE document_data END,signed_at=CASE WHEN ${data.status}='signed' THEN COALESCE(signed_at,NOW()) ELSE signed_at END,updated_at=NOW() WHERE id=${data.contractId}`;
     await sql`INSERT INTO gpm_audit_log (actor_label,action,entity_type,entity_id,details) VALUES (${admin.username},'contract.updated','contract',${String(data.contractId)},${data.status})`;
     return { success: true as const };
   });
