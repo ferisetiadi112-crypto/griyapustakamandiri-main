@@ -16,7 +16,7 @@ function db() {
   return neon(url);
 }
 
-async function ensurePlatformTables() {
+export async function ensurePlatformTables() {
   const sql = db();
   await sql`CREATE TABLE IF NOT EXISTS gpm_users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
