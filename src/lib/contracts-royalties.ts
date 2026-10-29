@@ -70,17 +70,24 @@ export const listRoyaltyForStaff = createServerFn({ method: "GET" as const }).ha
 });
 
 export const saveRoyaltyPeriod = createServerFn({ method: "POST" as const })
-  .validator((input: { userId: string; bookId: number; periodStart: string; periodEnd: string; unitsSold: number; grossRevenue: number; netRevenue: number; royaltyPercent: number; status: string; paymentReference: string }) => input)
+  .validator((input: { contractId: number; periodStart: string; periodEnd: string; unitsSold: number; grossRevenue: number; netRevenue: number; status: string; paymentReference: string }) => input)
   .handler(async ({ data }) => {
     const access = await staffAllowed();
     if (!access.allowed) return { success: false as const, error: "Akses keuangan atau pimpinan diperlukan." };
     if (!/^\d{4}-\d{2}-\d{2}$/.test(data.periodStart) || !/^\d{4}-\d{2}-\d{2}$/.test(data.periodEnd) || data.periodStart > data.periodEnd) return { success: false as const, error: "Periode tanggal tidak valid." };
-    if (![data.unitsSold,data.grossRevenue,data.netRevenue,data.royaltyPercent].every(Number.isFinite) || data.unitsSold < 0 || data.grossRevenue < 0 || data.netRevenue < 0 || data.royaltyPercent < 0 || data.royaltyPercent > 100 || data.netRevenue > data.grossRevenue) return { success: false as const, error: "Nilai penjualan atau royalti tidak valid." };
+    if (![data.unitsSold,data.grossRevenue,data.netRevenue].every(Number.isFinite) || data.unitsSold < 0 || data.grossRevenue < 0 || data.netRevenue < 0 || data.netRevenue > data.grossRevenue) return { success: false as const, error: "Nilai penjualan atau royalti tidak valid." };
     if (!["draft","approved","paid"].includes(data.status)) return { success: false as const, error: "Status royalti tidak valid." };
     const sql = await ensurePlatformTables();
-    const amount = Math.round(data.netRevenue * data.royaltyPercent / 100);
-    await sql`INSERT INTO gpm_royalty_periods (user_id,book_id,period_start,period_end,units_sold,gross_revenue,net_revenue,royalty_percent,royalty_amount,status,paid_at,payment_reference) VALUES (${data.userId},${data.bookId},${data.periodStart},${data.periodEnd},${Math.floor(data.unitsSold)},${Math.round(data.grossRevenue)},${Math.round(data.netRevenue)},${data.royaltyPercent},${amount},${data.status},CASE WHEN ${data.status}='paid' THEN NOW() ELSE NULL END,${data.paymentReference.trim()}) ON CONFLICT (user_id,book_id,period_start,period_end) DO UPDATE SET units_sold=EXCLUDED.units_sold,gross_revenue=EXCLUDED.gross_revenue,net_revenue=EXCLUDED.net_revenue,royalty_percent=EXCLUDED.royalty_percent,royalty_amount=EXCLUDED.royalty_amount,status=EXCLUDED.status,paid_at=EXCLUDED.paid_at,payment_reference=EXCLUDED.payment_reference`;
-    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${access.user?.id ?? null},${access.user?.email ?? access.adminName},'royalty.saved','royalty',${String(data.bookId)},${data.periodStart + "/" + data.periodEnd + "/" + amount})`;
+    const contracts = await sql`SELECT id,user_id,book_id,royalty_percent FROM gpm_publishing_contracts WHERE id=${data.contractId} AND status=${"signed"} AND book_id IS NOT NULL LIMIT 1`;
+    if (!contracts.length) return { success: false as const, error: "Pilih kontrak yang sudah ditandatangani dan terhubung ke buku katalog." };
+    const contract = contracts[0] as { id: number; user_id: string; book_id: number; royalty_percent: number | string };
+    const userId = contract.user_id;
+    const bookId = Number(contract.book_id);
+    const royaltyPercent = Number(contract.royalty_percent);
+    if (data.status === "paid" && !access.adminName && !access.user?.roles.some((role) => role === "finance" || role === "admin")) return { success: false as const, error: "Hanya admin atau keuangan yang dapat mencatat pembayaran." };
+    const amount = Math.round(data.netRevenue * royaltyPercent / 100);
+    await sql`INSERT INTO gpm_royalty_periods (user_id,book_id,period_start,period_end,units_sold,gross_revenue,net_revenue,royalty_percent,royalty_amount,status,paid_at,payment_reference) VALUES (${userId},${bookId},${data.periodStart},${data.periodEnd},${Math.floor(data.unitsSold)},${Math.round(data.grossRevenue)},${Math.round(data.netRevenue)},${royaltyPercent},${amount},${data.status},CASE WHEN ${data.status}='paid' THEN NOW() ELSE NULL END,${data.paymentReference.trim()}) ON CONFLICT (user_id,book_id,period_start,period_end) DO UPDATE SET units_sold=EXCLUDED.units_sold,gross_revenue=EXCLUDED.gross_revenue,net_revenue=EXCLUDED.net_revenue,royalty_percent=EXCLUDED.royalty_percent,royalty_amount=EXCLUDED.royalty_amount,status=EXCLUDED.status,paid_at=EXCLUDED.paid_at,payment_reference=EXCLUDED.payment_reference`;
+    await sql`INSERT INTO gpm_audit_log (actor_user_id,actor_label,action,entity_type,entity_id,details) VALUES (${access.user?.id ?? null},${access.user?.email ?? access.adminName},'royalty.saved','royalty',${String(bookId)},${data.periodStart + "/" + data.periodEnd + "/" + amount})`;
     return { success: true as const, royaltyAmount: amount };
   });
 
