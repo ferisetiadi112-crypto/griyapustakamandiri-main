@@ -12,16 +12,16 @@ import { HudLabel, Panel, StatusDot } from "@/components/hey/primitives";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Hey5050 — Open a Channel" },
+      { title: "Contact Griya Pustaka Mandiri — Open a Channel" },
       {
         name: "description",
         content:
-          "Get in touch with the Hey5050 team about the platform, partnerships, integrations or early access to the console.",
+          "Get in touch with the Griya Pustaka Mandiri team about the platform, partnerships, integrations or early access to the console.",
       },
-      { property: "og:title", content: "Contact Hey5050" },
+      { property: "og:title", content: "Contact Griya Pustaka Mandiri" },
       {
         property: "og:description",
-        content: "Open a channel with the Hey5050 team.",
+        content: "Open a channel with the Griya Pustaka Mandiri team.",
       },
     ],
   }),
@@ -29,8 +29,8 @@ export const Route = createFileRoute("/contact")({
 });
 
 const CHANNELS = [
-  { icon: Mail, label: "General", value: "hello@hey5050.com" },
-  { icon: Radio, label: "Partnerships", value: "partners@hey5050.com" },
+  { icon: Mail, label: "General", value: "Informasi kontak penerbit segera tersedia" },
+  { icon: Radio, label: "Partnerships", value: "Kerja sama penerbitan buku" },
   { icon: MapPin, label: "Station", value: "Orbital Systems Division · Sector 5050" },
 ];
 

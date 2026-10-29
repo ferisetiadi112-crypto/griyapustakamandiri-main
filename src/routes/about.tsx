@@ -8,16 +8,16 @@ import { Panel, SectionHeading, HudLabel } from "@/components/hey/primitives";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Hey5050 — Technology from the future" },
+      { title: "About Griya Pustaka Mandiri — Technology from the future" },
       {
         name: "description",
         content:
-          "Hey5050 is a technology platform exploring how humans and intelligent systems work together — designed for the future, built for humans today.",
+          "Griya Pustaka Mandiri is a technology platform exploring how humans and intelligent systems work together — designed for the future, built for humans today.",
       },
-      { property: "og:title", content: "About Hey5050" },
+      { property: "og:title", content: "About Griya Pustaka Mandiri" },
       {
         property: "og:description",
-        content: "The philosophy and principles behind the Hey5050 technology platform.",
+        content: "The philosophy and principles behind the Griya Pustaka Mandiri technology platform.",
       },
     ],
   }),
@@ -53,7 +53,7 @@ function About() {
       <PageHero
         eyebrow="About · Station Log"
         title="A platform built at the meeting point of humans and future technology"
-        description="The name Hey5050 is a greeting sent forward in time — a conversation between the people building today and the technology arriving tomorrow."
+        description="The name Griya Pustaka Mandiri is a greeting sent forward in time — a conversation between the people building today and the technology arriving tomorrow."
       />
 
       <section className="section">
@@ -62,7 +62,7 @@ function About() {
             <SectionHeading
               eyebrow="Mission"
               title="Technology from the future, designed for humans today"
-              description="Hey5050 is building the foundation for future digital creation, intelligent automation and connected technology. We work on the parts of that future that can be made usable now, and shape the platform so tomorrow's capabilities can dock into it without redesign."
+              description="Griya Pustaka Mandiri is building the foundation for future digital creation, intelligent automation and connected technology. We work on the parts of that future that can be made usable now, and shape the platform so tomorrow's capabilities can dock into it without redesign."
             />
             <p className="text-sm leading-relaxed text-muted-foreground">
               The platform is deliberately not defined by any single network or service. Individual
@@ -73,7 +73,7 @@ function About() {
             <HudLabel>Station Manifest</HudLabel>
             <dl className="grid gap-5">
               {[
-                ["Designation", "Hey5050 Orbital Platform"],
+                ["Designation", "Griya Pustaka Mandiri Orbital Platform"],
                 ["Focus", "Intelligent systems · Automation · Creation"],
                 ["Posture", "Platform-oriented, integration-agnostic"],
                 ["Phase", "Foundation — visual architecture"],

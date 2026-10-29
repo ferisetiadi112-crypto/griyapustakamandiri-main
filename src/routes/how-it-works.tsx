@@ -8,13 +8,13 @@ import { HudChip, HudLabel, Panel, SectionHeading } from "@/components/hey/primi
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "How Hey5050 Works — Connect, Create, Automate, Evolve" },
+      { title: "How Griya Pustaka Mandiri Works — Connect, Create, Automate, Evolve" },
       {
         name: "description",
         content:
-          "Four movements define the Hey5050 ecosystem: connect your tools, create content, automate workflows and progressively evolve with future technology.",
+          "Four movements define the Griya Pustaka Mandiri ecosystem: connect your tools, create content, automate workflows and progressively evolve with future technology.",
       },
-      { property: "og:title", content: "How Hey5050 Works" },
+      { property: "og:title", content: "How Griya Pustaka Mandiri Works" },
       {
         property: "og:description",
         content: "Connect, create, automate and evolve inside one futuristic operating environment.",
@@ -65,7 +65,7 @@ function HowItWorks() {
       <PageHero
         eyebrow="Operating Model"
         title="Four movements, one continuous system"
-        description="Hey5050 is designed as an ecosystem rather than a single tool. Each stage below describes how the platform is intended to behave once the full system is online."
+        description="Griya Pustaka Mandiri is designed as an ecosystem rather than a single tool. Each stage below describes how the platform is intended to behave once the full system is online."
       />
 
       <section className="section">

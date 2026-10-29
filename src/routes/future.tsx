@@ -9,13 +9,13 @@ import planet from "@/assets/planet-portal.jpg";
 export const Route = createFileRoute("/future")({
   head: () => ({
     meta: [
-      { title: "The Future — Hey5050 in 5050" },
+      { title: "The Future — Griya Pustaka Mandiri in 5050" },
       {
         name: "description",
         content:
-          "A long-horizon view of intelligent technology: how Hey5050 imagines creation, automation and human-computer interaction evolving toward the year 5050.",
+          "A long-horizon view of intelligent technology: how Griya Pustaka Mandiri imagines creation, automation and human-computer interaction evolving toward the year 5050.",
       },
-      { property: "og:title", content: "The Future — Hey5050" },
+      { property: "og:title", content: "The Future — Griya Pustaka Mandiri" },
       {
         property: "og:description",
         content: "A long-horizon view of technology, automation and human-computer interaction.",
@@ -54,7 +54,7 @@ function Future() {
       <PageHero
         eyebrow="Future · Long Horizon"
         title="Imagine technology in 5050"
-        description="Hey5050 treats the far future as a design constraint. If a decision would not survive a thousand years of iteration, it probably should not be a foundation."
+        description="Griya Pustaka Mandiri treats the far future as a design constraint. If a decision would not survive a thousand years of iteration, it probably should not be a foundation."
       />
 
       <section className="section">
@@ -97,7 +97,7 @@ function Future() {
           <Panel className="flex flex-col items-start gap-6 p-8 md:flex-row md:items-center md:justify-between md:p-10">
             <SectionHeading
               title="Join the next generation"
-              description="Access the Hey5050 console and follow the platform as it comes online."
+              description="Access the Griya Pustaka Mandiri console and follow the platform as it comes online."
             />
             <Button asChild variant="hero" size="lg">
               <Link to="/login">
